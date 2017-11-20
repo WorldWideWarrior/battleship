@@ -6,5 +6,35 @@
 </head>
 <body>
 
+    <main>
+        <div>
+            <h5 id="player1Name">Player 1: </h5>
+            <h5 id="player2Name">Player 2: </h5>
+            <button class="btn" type="button" data-toggle="modal" data-target="#player-modal" >Change Names</button>
+        </div>
+    </main>
+
+    <div class="modal fade" id="player-modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Please enter the player names</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="player1Input">Player 1:</label>
+                        <input type="text" class="form-control" id="player1Input">
+                        <br/>
+                        <label for="player2Input">Player 2:</label>
+                        <input type="text" class="form-control" id="player2Input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="buttonReadyPlayerModal">Ready</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>
