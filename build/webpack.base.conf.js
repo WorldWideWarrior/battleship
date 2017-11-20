@@ -32,11 +32,28 @@ module.exports = {
   },
   module: {
     rules: [
+      // {
+      //   test: /\.js/,
+      //   loader: 'eslint-loader',
+      //   enforce: 'pre',
+      //   include: [resolve('src'), resolve('test')],
+      //   options: {
+      //     formatter: require('eslint-friendly-formatter')
+      //   }
+      // },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test')]
       },
+      // {
+      //   test: /\.pug$/,
+      //   loader: 'pug-loader',
+      //   options: {
+      //     root: resolve('src/views'),
+      //     pretty: true
+      //   }
+      // },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
