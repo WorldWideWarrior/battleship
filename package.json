@@ -1,13 +1,14 @@
 {
-  "name": "webpack-simple-starter",
+  "name": "battleship",
   "version": "1.0.0",
-  "description": "A simple webpack starter without framework (Like Vue, React, Angular, etc.)",
+  "description": "HTML5 version of the Battleship game",
+  "author": "David Nadoba <dnadoba@gmail.com>, Martin Schalter <schalter.dev@gmail.com>",
+  "repository": "https://github.com/WorldWideWarrior/battleship",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node build/dev-server.js",
     "build": "node build/build.js"
   },
-  "author": "Sinan Mutlu <sinanm17@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "autoprefixer": "^7.1.6",
