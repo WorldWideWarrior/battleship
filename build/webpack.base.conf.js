@@ -5,6 +5,7 @@ var config = require('../config')
 var utils = require('./utils')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -32,26 +33,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
-        options: {
-          formatter: require('eslint-friendly-formatter')
-        }
-      },
-      {
         test: /\.js$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test')]
-      },
-      {
-        test: /\.pug$/,
-        loader: 'pug-loader',
-        options: {
-          root: resolve('src/views'),
-          pretty: true
-        }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -72,7 +56,9 @@ module.exports = {
     ]
   },
   plugins: [
-    ...utils.pageFile(isDev),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html"
+    }),
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css')
