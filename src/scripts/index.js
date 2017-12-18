@@ -1,9 +1,32 @@
-//show modal on startup
-$('#player-modal').modal({
-        backdrop: 'static',
-        keyboard: false
+$(document).ready(function () {
+    //show modal on startup
+    $('#player-modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        }
+    );
+
+    //create tables
+    $('#field-own').html(table(10,10));
+    $('#field-opponent').html(table(10,10));
+
+});
+
+function table(rows, columns) {
+    var table = "";
+
+    for(var row = 0; row < rows; row++) {
+        table += "<tr>"
+        for(var column = 0; column < columns; column++) {
+            table += "<td>";
+            table += "</td>";
+        }
     }
-);
+
+    console.log("Table: " + table);
+
+    return table;
+}
 
 //validate player names
 $("#buttonReadyPlayerModal").click( () => {
@@ -16,4 +39,4 @@ $("#buttonReadyPlayerModal").click( () => {
         $('#player-modal').modal('hide');
     }
 
-})
+});

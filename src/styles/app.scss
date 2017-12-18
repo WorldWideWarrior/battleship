@@ -81,3 +81,14 @@ input::-webkit-file-upload-button {
 		text-transform: uppercase;
 	}
 }
+
+.field {
+  float: left;
+  margin: 20px;
+
+  td {
+    padding: 20px;
+    background-color: #62e3f5;
+    border: white 2px solid;
+  }
+}
