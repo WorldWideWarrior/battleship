@@ -4,6 +4,9 @@
     "es6": true,
     "jquery": true
   },
+  "extends": "airbnb",
 
-  "extends": "airbnb"
+  "rules": {
+    "no-plusplus": 0
+  }
 }
