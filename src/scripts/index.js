@@ -1,49 +1,47 @@
-import io from 'socket.io-client'
-
-$(document).ready(function () {
-    //show modal on startup
-    $('#player-modal').modal({
-            backdrop: 'static',
-            keyboard: false
-        }
-    );
-
-    //create tables
-    var fieldOwn = $('#field-own');
-    generateTable(fieldOwn, 10,10);
-    var fieldOpponent = $('#field-opponent');
-    generateTable(fieldOpponent, 10,10);
-
-    var socket = io("localhost:3000")
-});
+import io from 'socket.io-client';
 
 function generateTable(table, rows, columns) {
-    for(var row = 0; row < rows; row++) {
-        var rowElement = $('<tr></tr>');
-        for(var column = 0; column < columns; column++) {
-            var columnElement = $('<td/>');
+  for (let row = 0; row < rows; row++) {
+    const rowElement = $('<tr></tr>');
+    for (let column = 0; column < columns; column++) {
+      const columnElement = $('<td/>');
 
-            (function(row, column){
-                columnElement.on('click', function () {
-                    console.log("Click: " + row + ", " + column);
-                })
-            })(row, column);
+      (function (clickRow, clickColumn) {
+        columnElement.on('click', () => {
+          console.log(`Click: ${clickRow}, ${clickColumn}`);
+        });
+      }(row, column));
 
-            rowElement.append(columnElement);
-        }
-        table.append(rowElement)
+      rowElement.append(columnElement);
     }
+    table.append(rowElement);
+  }
 }
 
-//validate player names
-$("#buttonReadyPlayerModal").click( () => {
-    var player1 = $('#player1Input').val();
-    var player2 = $('#player2Input').val();
+$(document).ready(() => {
+  // show modal on startup
+  $('#player-modal').modal({
+    backdrop: 'static',
+    keyboard: false,
+  });
 
-    if(player1 !== "" && player2 !== "" && player1 !== player2) {
-        $('#player1Name').text("Player 1: " + player1);
-        $('#player2Name').text("Player 2: " + player2);
-        $('#player-modal').modal('hide')
-    }
+  // create tables
+  const fieldOwn = $('#field-own');
+  generateTable(fieldOwn, 10, 10);
+  const fieldOpponent = $('#field-opponent');
+  generateTable(fieldOpponent, 10, 10);
 
+  const socket = io('localhost:3000');
+});
+
+// validate player names
+$('#buttonReadyPlayerModal').click(() => {
+  const player1 = $('#player1Input').val();
+  const player2 = $('#player2Input').val();
+
+  if (player1 !== '' && player2 !== '' && player1 !== player2) {
+    $('#player1Name').text(`Player 1: ${player1}`);
+    $('#player2Name').text(`Player 2: ${player2}`);
+    $('#player-modal').modal('hide');
+  }
 });
