@@ -6,7 +6,10 @@ let socket;
 let actualState;
 let ownName;
 let opponentName;
-let ships;
+let myShips;
+let otherShips;
+let myShots;
+let otherShots;
 
 function generateTable(table, rows, columns) {
     for (let row = 0; row < rows; row++) {
@@ -27,35 +30,127 @@ function generateTable(table, rows, columns) {
 }
 
 function showPlayerInput() {
-    // show modal on startup
     $('#player-modal').modal({
         backdrop: 'static',
         keyboard: false,
     });
 }
 
-function sendPlayerName() {
+function showDisconnectModal() {
+    $('#disconnect-modal').modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
+}
+
+function showGameOverModal(winner) {
+    $('#gameOver-modal').modal({
+        backdrop: 'static',
+        keyboard: false,
+    });
+
+    $('#playerWinner').html(winner);
+}
+
+function showWaitingModal() {
+    $('#waiting-modal').modal({
+        backdrop: 'static',
+        keyboard: false,
+    })
+}
+
+function closeGameOverModal() {
+    $('#gameOver-modal').modal('hide');
+}
+
+function closeDisconnectModal() {
+    $('#player-modal').modal('hide');
+}
+
+function closeWaitingModal() {
+    $('#waiting-modal').modal('hide');
+}
+
+function addShip(name, posX, posY, orientation) {
+    myShips.push({
+        name,
+        position: {
+            x: posX,
+            y: posY,
+        },
+        orientation,
+    });
+}
+
+function addShot(posx, posy, hit) {
+    shots.push({
+        position: {
+            x: posx,
+            y: posy,
+        },
+        hit,
+    });
+}
+
+function setOwnName(name) {
+    ownName = name;
+    $('#player1Name').text(`You: ${name}`);
     socket.emit('set-name', ownName);
+}
+
+function setOpponentName(name) {
+    opponentName = name;
+    $('#player2Name').text(`Opponent: ${name}`);
+    socket.emit('set-name', ownName);
+}
+
+function parseShips(snapshot) {
+    if (snapshot.myShips) { myShips = snapshot.myShips; }
+
+    if (snapshot.otherShips) { otherShips = snapshot.otherShips; }
+}
+
+function parseShots(snapshot) {
+    if (snapshot.myShots) { myShots = snapshot.myShots; }
+    if (snapshot.otherShots) { otherShots = snapshot.otherShots; }
+}
+
+function parseNames(snapshot) {
+    setOwnName(snapshot.myName);
+    setOpponentName(snapshot.otherName);
 }
 
 function onGameState(snapshot) {
     actualState = snapshot.state;
     if (snapshot.state === 'waitingForSecondPlayer') {
-
+        showWaitingModal();
     } else if (snapshot.state === 'setup') {
+        closeWaitingModal();
         showPlayerInput();
     } else if (snapshot.state === 'attack') {
-
+        parseShips(snapshot);
+        parseShots(snapshot);
+        parseNames(snapshot);
     } else if (snapshot.state === 'defence') {
-
+        parseShips(snapshot);
+        parseShots(snapshot);
+        parseNames(snapshot);
     } else if (snapshot.state === 'otherPlayerDisconnect') {
-
+        showDisconnectModal();
     } else if (snapshot.state === 'gameOver') {
-
+        parseShips(snapshot);
+        parseShots(snapshot);
+        parseNames(snapshot);
+        showGameOverModal(snapshot.winner);
     }
 }
 
 $(document).ready(() => {
+    myShips = [];
+    otherShips = [];
+    myShots = [];
+    otherShots = [];
+
     // create tables
     const fieldOwn = $('#field-own');
     generateTable(fieldOwn, 10, 10);
@@ -73,8 +168,7 @@ $(document).ready(() => {
     });
 
     socket.on('set-name', (name) => {
-        opponentName = name;
-        $('#player2Name').text(`Opponent: ${name}`);
+        setOpponentName(name);
     });
 
     socket.on('game-state', (snapshot) => {
@@ -87,9 +181,7 @@ $('#buttonReadyPlayerModal').click(() => {
     const playerName = $('#playerNameInput').val();
 
     if (playerName) {
-        $('#player1Name').text(`You: ${playerName}`);
+        setOwnName(playerName);
         $('#player-modal').modal('hide');
-        ownName = playerName;
-        sendPlayerName();
     }
 });
