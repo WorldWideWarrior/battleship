@@ -7,19 +7,19 @@ module.exports = class Lobby {
         this.io = io;
         this.waitingPlayer = undefined;
 
-        io.on('connection', this.onNewSocket.bind(this));
+        io.on(Lobby.CLIENT_EVENT.CONNECTION, this.onNewSocket.bind(this));
     }
 
     onNewSocket(socket) {
         console.log('a user connected');
 
-        socket.on('client-id', this.onClientID.bind(this, socket));
+        socket.on(Lobby.CLIENT_EVENT.CLIENT_ID, this.onClientID.bind(this, socket));
     }
 
     onClientID(socket, clientId) {
         if (!clientId) {
             const newid = this.getNewUserId();
-            socket.emit('client-id', newid);
+            socket.emit(Lobby.SERVER_EVENT.CLIENT_ID, newid);
             const player = new Player(socket, newid);
             this.newPlayerCreated(socket, player);
         } else {
@@ -64,11 +64,12 @@ module.exports = class Lobby {
 Lobby.CLIENT_EVENT = {
     //not a real client event because it is not send from the client but the client initialized the process
     CONNECTION: "connection",
+    CLIENT_ID: "client-id",
 };
 /**
  * events that the server emits (socket.io)
  * @type {Object.<String, String>}
  */
 Lobby.SERVER_EVENT = {
-
+    CLIENT_ID: "client-id",
 };
