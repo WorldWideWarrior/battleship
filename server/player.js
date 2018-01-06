@@ -6,9 +6,7 @@ module.exports = class Player extends EventEmitter {
         this.socket = socket;
         this.id = id;
 
-        socket.on('set-name', (name) => {
-            this.onNameSet(name);
-        });
+        socket.on('set-name', this.onNameSet.bind(this));
 
         console.log(`Created user: ${id}, socket: ${socket}`);
     }

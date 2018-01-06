@@ -3,13 +3,9 @@ module.exports = class Game {
         this.player1 = player1;
         this.player2 = player2;
 
-        player1.on('set-name', (name) => {
-            player2.sendOpponentName(name);
-        });
+        player1.on('set-name', player2.sendOpponentName.bind(player2));
 
-        player2.on('set-name', (name) => {
-            player1.sendOpponentName(name);
-        });
+        player2.on('set-name', player1.sendOpponentName.bind(player1));
 
         console.log(`Game created, player1: ${player1}, player2: ${player2}`);
     }

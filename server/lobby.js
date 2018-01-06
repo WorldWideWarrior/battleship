@@ -7,17 +7,13 @@ module.exports = class Lobby {
         this.io = io;
         this.waitingPlayer = undefined;
 
-        io.on('connection', (socket) => {
-            this.onNewSocket(socket);
-        });
+        io.on('connection', this.onNewSocket.bind(this));
     }
 
     onNewSocket(socket) {
         console.log('a user connected');
 
-        socket.on('client-id', (clientId) => {
-            this.onClientID(socket, clientId);
-        });
+        socket.on('client-id', this.onClientID.bind(this, socket));
     }
 
     onClientID(socket, clientId) {
