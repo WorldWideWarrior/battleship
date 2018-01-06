@@ -18,6 +18,7 @@
   "homepage": "https://github.com/WorldWideWarrior/battleship#readme",
   "dependencies": {
     "express": "^4.16.2",
+    "is-uuid": "^1.0.2",
     "serve-static": "^1.13.1",
     "socket.io": "^2.0.4",
     "uuid": "^3.1.0"

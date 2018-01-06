@@ -1,4 +1,5 @@
 const uuidv4 = require('uuid/v4');
+const isUuid = require('is-uuid');
 const Player = require('./player.js');
 const Game = require('./game.js');
 
@@ -18,7 +19,7 @@ class Lobby {
     }
 
     onClientID(socket, clientId) {
-        if (!clientId) {
+        if (!isUuid.v4(clientId)) {
             const newid = this.getNewUserId();
             socket.emit(Lobby.SERVER_EVENT.CLIENT_ID, newid);
             const player = new Player(socket, newid);
