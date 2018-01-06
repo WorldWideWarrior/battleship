@@ -45,13 +45,7 @@ module.exports = class Lobby {
     }
 
     getGameForPlayerID(playerId) {
-        for (let i = 0; i < this.games.length; i++) {
-            if (this.games[i].containsPlayer(playerId)) {
-                return this.games[i];
-            }
-        }
-
-        return undefined;
+        return this.games.find((game) => game.containsPlayer(playerId));
     }
 
     createGame(player1, player2) {
