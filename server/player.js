@@ -7,10 +7,22 @@ class Player extends EventEmitter {
         this.id = id;
         this.ships = undefined;
 
-        socket.on(Player.CLIENT_EVENT.SET_NAME, this.onNameSet.bind(this));
-        socket.on(Player.CLIENT_EVENT.SET_SHIPS, this.onShipsSet.bind(this));
+        this.bindedOnNameSet = this.onNameSet.bind(this);
+        this.bindedOnShipsSet = this.onShipsSet.bind(this)
+
+        this.addListenerToSocket(socket);
 
         console.log(`Created user: ${id}, socket: ${socket}`);
+    }
+
+    removeListenerFromSocket(socket) {
+        socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
+        socket.removeListener(Player.CLIENT_EVENT.CLIENT_EVENT, this.bindedOnShipsSet);
+    }
+
+    addListenerToSocket(socket) {
+        socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
+        socket.once(Player.CLIENT_EVENT.SET_SHIPS, this.bindedOnShipsSet);
     }
 
     sendOpponentName(opponent, name) {
@@ -37,7 +49,9 @@ class Player extends EventEmitter {
     }
 
     reconnect(socket) {
+        this.removeListenerFromSocket(this.socket);
         this.socket = socket;
+        this.addListenerToSocket(socket);
         console.log(`reconnected user: ${this.id}`);
     }
 
