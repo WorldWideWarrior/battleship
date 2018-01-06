@@ -1,3 +1,4 @@
+const uuidv4 = require('uuid/v4');
 const Player = require('./player.js');
 const Game = require('./game.js');
 
@@ -53,6 +54,7 @@ class Lobby {
     }
 
     getNewUserId() {
+        return uuidv4();
     }
 };
 
