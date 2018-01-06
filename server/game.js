@@ -1,11 +1,13 @@
+const Player = require('./player.js');
+
 module.exports = class Game {
     constructor(player1, player2) {
         this.player1 = player1;
         this.player2 = player2;
 
-        player1.on('set-name', player2.sendOpponentName.bind(player2));
+        player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
 
-        player2.on('set-name', player1.sendOpponentName.bind(player1));
+        player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
 
         console.log(`Game created, player1: ${player1}, player2: ${player2}`);
     }
@@ -26,4 +28,19 @@ module.exports = class Game {
             this.player2.reconnect(socket);
         }
     }
+};
+
+/**
+ * events that the client emits (socket.io)
+ * @type {Object.<String, String>}
+ */
+Game.CLIENT_EVENT = {
+
+};
+/**
+ * events that the server emits (socket.io)
+ * @type {Object.<String, String>}
+ */
+Game.SERVER_EVENT = {
+  GAME_STATE: 'game-state',
 };

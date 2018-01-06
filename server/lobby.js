@@ -36,7 +36,7 @@ module.exports = class Lobby {
     newPlayerCreated(socket, player) {
         if (!this.waitingPlayer) {
             this.waitingPlayer = player;
-            socket.emit('game-state', { state: 'waitingForSecondPlayer' });
+            socket.emit(Game.SERVER_EVENT.GAME_STATE, { state: 'waitingForSecondPlayer' });
         } else {
             const game = this.createGame(this.waitingPlayer, player);
             this.games.push(game);
@@ -61,4 +61,20 @@ module.exports = class Lobby {
     getNewUserId() {
         return Math.floor(Math.random() * 1000);
     }
+};
+
+/**
+ * events that the client emits (socket.io)
+ * @type {Object.<String, String>}
+ */
+Lobby.CLIENT_EVENT = {
+    //not a real client event because it is not send from the client but the client initialized the process
+    CONNECTION: "connection",
+};
+/**
+ * events that the server emits (socket.io)
+ * @type {Object.<String, String>}
+ */
+Lobby.SERVER_EVENT = {
+
 };
