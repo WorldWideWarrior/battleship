@@ -1,7 +1,7 @@
 const Player = require('./player.js');
 const Game = require('./game.js');
 
-module.exports = class Lobby {
+class Lobby {
     constructor(io) {
         this.games = [];
         this.io = io;
@@ -53,7 +53,6 @@ module.exports = class Lobby {
     }
 
     getNewUserId() {
-        return Math.floor(Math.random() * 1000);
     }
 };
 
@@ -73,3 +72,5 @@ Lobby.CLIENT_EVENT = {
 Lobby.SERVER_EVENT = {
     CLIENT_ID: "client-id",
 };
+
+module.exports = Lobby;

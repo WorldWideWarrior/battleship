@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 
-module.exports = class Player extends EventEmitter {
+class Player extends EventEmitter {
     constructor(socket, id) {
         super();
         this.socket = socket;
@@ -54,3 +54,5 @@ Player.CLIENT_EVENT = {
 Player.SERVER_EVENT = {
     SET_NAME: 'set-name',
 };
+
+module.exports = Player;
