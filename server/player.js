@@ -5,8 +5,10 @@ class Player extends EventEmitter {
         super();
         this.socket = socket;
         this.id = id;
+        this.ships = undefined;
 
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.onNameSet.bind(this));
+        socket.on(Player.CLIENT_EVENT.SET_SHIPS, this.onShipsSet.bind(this));
 
         console.log(`Created user: ${id}, socket: ${socket}`);
     }
@@ -18,6 +20,12 @@ class Player extends EventEmitter {
     onNameSet(name) {
         this.name = name;
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
+    }
+    onShipsSet(ships) {
+        //check if the user already set its ships
+        if(this.ships) return;
+
+        this.emit(Player.EVENT.SETUP_FINISHED);
     }
 
     setName(name) {
@@ -32,6 +40,10 @@ class Player extends EventEmitter {
         this.socket = socket;
         console.log(`reconnected user: ${this.id}`);
     }
+
+    get debugDescription() {
+        return `Player(name = ${this.name}, id = ${thisid})`
+    }
 };
 /**
  * local events from the player instance directly (not from socket.io)
@@ -39,6 +51,7 @@ class Player extends EventEmitter {
  */
 Player.EVENT = {
     CHANGE_NAME: 'change-name',
+    SETUP_FINISHED: 'setup-finished',
 };
 /**
  * events that the client emits (socket.io)
@@ -46,6 +59,7 @@ Player.EVENT = {
  */
 Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
+    SET_SHIPS: 'set-ships',
 };
 /**
  * events that the server emits (socket.io)

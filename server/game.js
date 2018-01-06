@@ -7,8 +7,10 @@ class Game {
         this.player2 = player2;
 
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
-
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
+
+        player1.on(Player.EVENT.SETUP_FINISHED, this.onPlayerSetupFinished.bind(this, player1));
+        player2.on(Player.EVENT.SETUP_FINISHED, this.onPlayerSetupFinished.bind(this, player2));
 
         console.log(`Game created, player1: ${player1}, player2: ${player2}`);
     }
@@ -27,6 +29,16 @@ class Game {
             this.player1.reconnect(socket);
         } else if (this.player2.getId() === playerId) {
             this.player2.reconnect(socket);
+        }
+    }
+
+    onPlayerSetupFinished(player) {
+        if(this.state === Game.STATE.SETUP_BOTH_PLAYERS) {
+            this.changeState(Game.STATE.SETUP_ONE_PLAYER);
+        } else if (this.state === Game.STATE.SETUP_ONE_PLAYER) {
+            this.changeState(Game.STATE.TURN_OF_PLAYER_ONE);
+        } else {
+            console.debug(`onPlayerSetupFinished called for ${player.debugDescription} but state is ${this.state}`);
         }
     }
 
