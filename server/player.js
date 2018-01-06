@@ -8,7 +8,7 @@ class Player extends EventEmitter {
         this.ships = undefined;
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
-        this.bindedOnShipsSet = this.onShipsSet.bind(this)
+        this.bindedOnShipsSet = this.onShipsSet.bind(this);
 
         this.addListenerToSocket(socket);
 
@@ -26,7 +26,7 @@ class Player extends EventEmitter {
     }
 
     sendOpponentName(opponent, name) {
-        this.socket.emit('set-name', opponent.id, name);
+        this.socket.emit(Player.SERVER_EVENT.SET_NAME, opponent.id, name);
     }
 
     onNameSet(name) {
