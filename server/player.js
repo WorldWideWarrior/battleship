@@ -1,4 +1,6 @@
 const EventEmitter = require('events');
+const Ships = require('./ships.js');
+const GenerateShips = require('./generate-ships.js');
 
 class Player extends EventEmitter {
     constructor(socket, id) {
@@ -14,11 +16,24 @@ class Player extends EventEmitter {
         this.addListenerToSocket(socket);
 
         console.log(`Created user: ${id}, socket: ${socket}`);
+
+        console.log(`Ships: ${this.generateShips()}`);
+        //TODO send ships to local client
+    }
+
+    generateShips() {
+        const shipsToGenerate = [
+            Ships.CARRIER, Ships.BATTLESHIP, Ships.BATTLESHIP,
+            Ships.CRUISER, Ships.CRUISER, Ships.CRUISER,
+            Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER
+        ];
+
+        return GenerateShips.generateShips(shipsToGenerate);
     }
 
     removeListenerFromSocket(socket) {
         socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        socket.removeListener(Player.CLIENT_EVENT.CLIENT_EVENT, this.bindedOnShipsSet);
+        //socket.removeListener(Player.CLIENT_EVENT.CLIENT_EVENT, this.bindedOnShipsSet);
     }
 
     addListenerToSocket(socket) {
