@@ -57,7 +57,7 @@ class Lobby {
     getNewUserId() {
         return uuidv4();
     }
-};
+}
 
 /**
  * events that the client emits (socket.io)

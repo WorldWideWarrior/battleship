@@ -122,7 +122,7 @@ function parseNames(snapshot) {
 
 function onGameState(snapshot) {
     actualState = snapshot.state;
-    if (snapshot.state === 'waitingForSecondPlayer') {
+    if (snapshot.state === 'waiting-for-second-player') {
         showWaitingModal();
     } else if (snapshot.state === 'setup') {
         closeWaitingModal();
@@ -135,9 +135,9 @@ function onGameState(snapshot) {
         parseShips(snapshot);
         parseShots(snapshot);
         parseNames(snapshot);
-    } else if (snapshot.state === 'otherPlayerDisconnect') {
+    } else if (snapshot.state === 'other-player-disconnect') {
         showDisconnectModal();
-    } else if (snapshot.state === 'gameOver') {
+    } else if (snapshot.state === 'game-over') {
         parseShips(snapshot);
         parseShots(snapshot);
         parseNames(snapshot);
