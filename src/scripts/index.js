@@ -4,7 +4,7 @@ let clientId = localStorage.getItem("clientId");
 let socket;
 
 let actualState;
-let ownName;
+let ownName = localStorage.getItem("name");
 let opponentName;
 let myShips;
 let otherShips;
@@ -94,6 +94,7 @@ function addShot(posx, posy, hit) {
 
 function setOwnName(name) {
     ownName = name;
+    localStorage.setItem("name", name);
     $('#player1Name').text(`You: ${name}`);
     socket.emit('set-name', ownName);
 }
@@ -161,6 +162,9 @@ $(document).ready(() => {
 
     socket.on('connect', () => {
         socket.emit('client-id', clientId);
+        if(ownName) {
+            setOwnName(ownName);
+        }
     });
 
     socket.on('client-id', (id) => {
