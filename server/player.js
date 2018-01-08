@@ -3,6 +3,7 @@ const EventEmitter = require('events');
 class Player extends EventEmitter {
     constructor(socket, id) {
         super();
+        this.isConnected = true;
         this.socket = socket;
         this.id = id;
         this.ships = undefined;
@@ -29,6 +30,18 @@ class Player extends EventEmitter {
         this.socket.emit(Player.SERVER_EVENT.SET_NAME, opponent.id, name);
     }
 
+    onGameStateChange(game, fromState, toState) {
+        const clientState = game.clientStateForPlayer(this, toState);
+        const gameState = {
+            state: clientState,
+        };
+        this.socket.emit(Player.SERVER_EVENT.GAME_STATE, gameState);
+    }
+
+    onDisconnect() {
+        this.isConnected = false;
+    }
+
     onNameSet(name) {
         this.name = name;
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
@@ -49,6 +62,7 @@ class Player extends EventEmitter {
     }
 
     reconnect(socket) {
+        this.isConnected = true;
         this.removeListenerFromSocket(this.socket);
         this.socket = socket;
         this.addListenerToSocket(socket);
@@ -57,6 +71,10 @@ class Player extends EventEmitter {
 
     get debugDescription() {
         return `Player(name = ${this.name}, id = ${thisid})`
+    }
+
+    get isSetupDone() {
+        return !!this.ships;
     }
 };
 /**
@@ -81,6 +99,7 @@ Player.CLIENT_EVENT = {
  */
 Player.SERVER_EVENT = {
     SET_NAME: 'set-name',
+    GAME_STATE: 'game-state',
 };
 
 module.exports = Player;
