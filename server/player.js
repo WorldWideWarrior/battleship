@@ -9,7 +9,7 @@ class Player extends EventEmitter {
         this.ships = undefined;
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
-        this.bindedOnShipsSet = this.onShipsSet.bind(this);
+        //this.bindedOnShipsSet = this.onShipsSet.bind(this);
 
         this.addListenerToSocket(socket);
 
@@ -23,7 +23,7 @@ class Player extends EventEmitter {
 
     addListenerToSocket(socket) {
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        socket.once(Player.CLIENT_EVENT.SET_SHIPS, this.bindedOnShipsSet);
+        //socket.once(Player.CLIENT_EVENT.SET_SHIPS, this.bindedOnShipsSet);
     }
 
     sendOpponentName(opponent, name) {
@@ -46,12 +46,13 @@ class Player extends EventEmitter {
         this.name = name;
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
     }
+    /*
     onShipsSet(ships) {
         //check if the user already set its ships
         if(this.ships) return;
 
         this.emit(Player.EVENT.SETUP_FINISHED);
-    }
+    }*/
 
     setName(name) {
         this.name = name;
@@ -91,7 +92,7 @@ Player.EVENT = {
  */
 Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
-    SET_SHIPS: 'set-ships',
+    //SET_SHIPS: 'set-ships', TODO ships are set from the server
 };
 /**
  * events that the server emits (socket.io)
