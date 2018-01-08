@@ -3,7 +3,7 @@ const Player = require('./player.js');
 class Game {
     constructor(player1, player2) {
         this.state = Game.SERVER_STATE.SETUP;
-        this.previoisState = undefined;
+        this.previousState = undefined;
         this.player1 = player1;
         this.player2 = player2;
 
@@ -36,9 +36,9 @@ class Game {
         }
         reconnectedPlayer.reconnect(socket);
         if(this.state === Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED) {
-            this.changeState(this.previoisState);
+            this.changeState(this.previousState);
         } else {
-            reconnectedPlayer.onGameStateChange(this, this.previoisState, this.state);
+            reconnectedPlayer.onGameStateChange(this, this.previousState, this.state);
         }
     }
 
@@ -78,7 +78,7 @@ class Game {
             console.debug(`Can't change game state from ${fromState} state to ${toState} state`);
             return;
         }
-        this.previoisState = fromState;
+        this.previousState = fromState;
         this.state = toState;
 
         this.allPlayers.forEach((player) => {

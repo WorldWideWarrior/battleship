@@ -8,7 +8,7 @@ class Player extends EventEmitter {
         this.isConnected = true;
         this.socket = socket;
         this.id = id;
-        this.ships = undefined;
+        this.ships = this.generateShips();
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
         //this.bindedOnShipsSet = this.onShipsSet.bind(this);
@@ -17,7 +17,6 @@ class Player extends EventEmitter {
 
         console.log(`Created user: ${id}, socket: ${socket}`);
 
-        console.log(`Ships: ${this.generateShips()}`);
         //TODO send ships to local client
     }
 
