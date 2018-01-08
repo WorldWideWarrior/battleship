@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-let clientId;
+let clientId = localStorage.getItem("clientId");
 let socket;
 
 let actualState;
@@ -165,6 +165,7 @@ $(document).ready(() => {
 
     socket.on('client-id', (id) => {
         clientId = id;
+        localStorage.setItem("clientId", id);
     });
 
     socket.on('set-name', (name) => {
