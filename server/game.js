@@ -2,7 +2,7 @@ const Player = require('./player.js');
 
 class Game {
     constructor(player1, player2) {
-        this.state = Game.SERVER_STATE.SETUP;
+        this.state = Game.SERVER_STATE.INIT;
         this.previousState = undefined;
         this.player1 = player1;
         this.player2 = player2;
@@ -10,10 +10,10 @@ class Game {
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
 
-        player1.on(Player.EVENT.SETUP_FINISHED, this.onPlayerSetupFinished.bind(this, player1));
-        player2.on(Player.EVENT.SETUP_FINISHED, this.onPlayerSetupFinished.bind(this, player2));
+        console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
 
-        console.log(`Game created, player1: ${player1}, player2: ${player2}`);
+        //start game
+        this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
     }
 
     get allPlayers() {
@@ -24,6 +24,10 @@ class Game {
         return this.allPlayers.some((player) => {
             return player.getId() === playerId;
         });
+    }
+
+    getOpponentOf(player) {
+        return this.player1 === player ? this.player2 : this.player1;
     }
 
     reconnect(playerId, socket) {
@@ -54,14 +58,12 @@ class Game {
 
     canChangeState(fromState, toState) {
         const s = new StateChecker(fromState, toState);
-        return s.bidirectional(Game.SERVER_STATE.SETUP_BOTH_PLAYERS, Game.SERVER_STATE.SETUP_ONE_PLAYER) ||
-            s.bidirectional(Game.SERVER_STATE.SETUP_ONE_PLAYER, Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
-            s.bidirectional(Game.SERVER_STATE.TURN_OF_PLAYER_ONE, Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
+        return s.unidirectional(Game.SERVER_STATE.INIT, Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
 
+            s.bidirectional(Game.SERVER_STATE.TURN_OF_PLAYER_ONE, Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
             s.repeat(Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
             s.repeat(Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
 
-            s.bidirectional(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED, Game.SERVER_STATE.SETUP) ||
             s.bidirectional(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED, Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
             s.bidirectional(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED, Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
 
@@ -70,7 +72,7 @@ class Game {
     }
 
     changeState(toState) {
-        this._changeState(state, toState);
+        this._changeState(this.state, toState);
     }
 
     _changeState(fromState, toState) {
@@ -141,8 +143,7 @@ Game.SERVER_EVENT = {
  * @type {{SETUP: string, TURN_OF_PLAYER_ONE: string, TURN_OF_PLAYER_TWO: string, ONE_PLAYER_IS_DISCONNECTED: string, GAME_OVER: string}}
  */
 Game.SERVER_STATE = {
-    SETUP_BOTH_PLAYERS: 'setup-both',
-    SETUP_ONE_PLAYER: 'setup-one-player',
+    INIT: 'init',
     TURN_OF_PLAYER_ONE: 'turn-of-player-one',
     TURN_OF_PLAYER_TWO: 'turn-of-player-two',
     ONE_PLAYER_IS_DISCONNECTED: 'one-player-is-disconnected',
@@ -155,7 +156,6 @@ Game.SERVER_STATE = {
  */
 Game.CLIENT_STATE = {
     WAITING_FOR_OTHER_PLAYER: 'waiting-for-other-player',
-    SETUP: 'setup',
     DEFENCE: 'defence',
     ATTACK: 'attack',
     OTHER_PLAYER_DISCONNECTED: 'other-player-disconnected',

@@ -102,12 +102,12 @@ function setOwnName(name) {
 function setOpponentName(name) {
     opponentName = name;
     $('#player2Name').text(`Opponent: ${name}`);
-    socket.emit('set-name', ownName);
 }
 
 function parseShips(snapshot) {
+    console.log(snapshot.myShips);
     if (snapshot.myShips) { myShips = snapshot.myShips; }
-
+    console.log(snapshot.otherShips);
     if (snapshot.otherShips) { otherShips = snapshot.otherShips; }
 }
 

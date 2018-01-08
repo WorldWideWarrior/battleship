@@ -16,6 +16,7 @@ class Lobby {
         console.log('a user connected');
 
         socket.on(Lobby.CLIENT_EVENT.CLIENT_ID, this.onClientID.bind(this, socket));
+        socket.once(Lobby.CLIENT_EVENT.DISCONNECT, this.onSocketDisconnect.bind(this, socket))
     }
 
     onClientID(socket, clientId) {
@@ -27,11 +28,22 @@ class Lobby {
         } else {
             const runningGame = this.getGameForPlayerID(clientId);
             if (!runningGame) {
-                const player = new Player(socket, clientId);
-                this.newPlayerCreated(socket, player);
+                // check if the waiting player just reconnected
+                if(this.waitingPlayer && this.waitingPlayer.id === clientId) {
+                    this.waitingPlayer.reconnect(socket);
+                } else {
+                    const player = new Player(socket, clientId);
+                    this.newPlayerCreated(socket, player);
+                }
             } else {
                 runningGame.reconnect(clientId, socket);
             }
+        }
+    }
+
+    onSocketDisconnect(socket) {
+        if(this.waitingPlayer && this.waitingPlayer.socket === socket) {
+            this.waitingPlayer = undefined;
         }
     }
 

@@ -11,13 +11,10 @@ class Player extends EventEmitter {
         this.ships = this.generateShips();
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
-        //this.bindedOnShipsSet = this.onShipsSet.bind(this);
 
         this.addListenerToSocket(socket);
 
-        console.log(`Created user: ${id}, socket: ${socket}`);
-
-        //TODO send ships to local client
+        console.log(`Created user: ${id}, socket address: ${socket.handshake.address}`);
     }
 
     generateShips() {
@@ -32,12 +29,10 @@ class Player extends EventEmitter {
 
     removeListenerFromSocket(socket) {
         socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        //socket.removeListener(Player.CLIENT_EVENT.CLIENT_EVENT, this.bindedOnShipsSet);
     }
 
     addListenerToSocket(socket) {
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        //socket.once(Player.CLIENT_EVENT.SET_SHIPS, this.bindedOnShipsSet);
     }
 
     sendOpponentName(opponent, name) {
@@ -46,9 +41,15 @@ class Player extends EventEmitter {
 
     onGameStateChange(game, fromState, toState) {
         const clientState = game.clientStateForPlayer(this, toState);
+        const opponent = game.getOpponentOf(this);
         const gameState = {
             state: clientState,
+            //TODO only send ships once for each connection because this will never change (clients needs to be aware)
+            myShips: this.ships,
+            //TODO send only ships that are destroyed
+            otherShips: opponent.ships,
         };
+
         this.socket.emit(Player.SERVER_EVENT.GAME_STATE, gameState);
     }
 
@@ -60,13 +61,6 @@ class Player extends EventEmitter {
         this.name = name;
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
     }
-    /*
-    onShipsSet(ships) {
-        //check if the user already set its ships
-        if(this.ships) return;
-
-        this.emit(Player.EVENT.SETUP_FINISHED);
-    }*/
 
     setName(name) {
         this.name = name;
@@ -81,11 +75,11 @@ class Player extends EventEmitter {
         this.removeListenerFromSocket(this.socket);
         this.socket = socket;
         this.addListenerToSocket(socket);
-        console.log(`reconnected user: ${this.id}`);
+        console.log(`reconnected ${this.debugDescription}`);
     }
 
     get debugDescription() {
-        return `Player(name = ${this.name}, id = ${thisid})`
+        return `Player(name = ${this.name}, id = ${this.id})`
     }
 
     get isSetupDone() {
@@ -106,7 +100,6 @@ Player.EVENT = {
  */
 Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
-    //SET_SHIPS: 'set-ships', TODO ships are set from the server
 };
 /**
  * events that the server emits (socket.io)
