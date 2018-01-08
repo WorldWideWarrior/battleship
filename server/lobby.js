@@ -38,7 +38,7 @@ class Lobby {
     newPlayerCreated(socket, player) {
         if (!this.waitingPlayer) {
             this.waitingPlayer = player;
-            socket.emit(Game.SERVER_EVENT.GAME_STATE, { state: 'waitingForSecondPlayer' });
+            socket.emit(Game.SERVER_EVENT.GAME_STATE, { state: Game.CLIENT_STATE.WAITING_FOR_OTHER_PLAYER });
         } else {
             const game = this.createGame(this.waitingPlayer, player);
             this.games.push(game);

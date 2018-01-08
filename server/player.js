@@ -27,7 +27,7 @@ class Player extends EventEmitter {
     }
 
     sendOpponentName(opponent, name) {
-        this.socket.emit(Player.SERVER_EVENT.SET_NAME, opponent.id, name);
+        this.socket.emit(Player.SERVER_EVENT.SET_NAME, name);
     }
 
     onGameStateChange(game, fromState, toState) {

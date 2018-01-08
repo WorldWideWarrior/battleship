@@ -21,7 +21,7 @@ class Game {
     }
 
     containsPlayer(playerId) {
-        return this.allPlayers.contains((player) => {
+        return this.allPlayers.some((player) => {
             return player.getId() === playerId;
         });
     }
