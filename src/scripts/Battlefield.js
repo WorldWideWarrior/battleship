@@ -18,15 +18,19 @@ export class Battlefield {
             for (let column = 0; column < width; column++) {
                 const columnElement = $('<td/>');
 
-                (function (clickRow, clickColumn) {
+                ((clickRow, clickColumn) => {
                     columnElement.on('click', () => {
-                        console.log(`Click: ${clickRow}, ${clickColumn}`);
+                        this.onClickOnField(clickColumn, clickRow);
                     });
-                }(row, column));
+                })(row, column);
 
                 rowElement.append(columnElement);
             }
             table.append(rowElement);
         }
+    }
+
+    onClickOnField(x, y) {
+        console.debug(`Click: ${x}, ${y}`);
     }
 }
