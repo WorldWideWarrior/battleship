@@ -97,7 +97,7 @@ input::-webkit-file-upload-button {
 
 	td.sea {
 		background-color: #62e3f5;
-		&.hover {
+		&:hover {
 		  background-color: #44c2f5;
 		}
 	}
