@@ -44,6 +44,8 @@ class Player extends EventEmitter {
         const opponent = game.getOpponentOf(this);
         const gameState = {
             state: clientState,
+            myName: this.name,
+            otherName: opponent.name,
             //TODO only send ships once for each connection because this will never change (clients needs to be aware)
             myShips: this.ships,
             //TODO send only ships that are destroyed
@@ -55,11 +57,13 @@ class Player extends EventEmitter {
 
     onDisconnect() {
         this.isConnected = false;
+        console.debug(`disconnected ${this.debugDescription}`);
     }
 
     onNameSet(name) {
         this.name = name;
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
+        console.debug(`name set ${this.debugDescription}`);
     }
 
     setName(name) {
@@ -92,7 +96,6 @@ class Player extends EventEmitter {
  */
 Player.EVENT = {
     CHANGE_NAME: 'change-name',
-    SETUP_FINISHED: 'setup-finished',
 };
 /**
  * events that the client emits (socket.io)
