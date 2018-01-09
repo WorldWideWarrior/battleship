@@ -90,7 +90,7 @@ export class Battlefield {
         });
 
         shots.forEach((shot) => {
-            field[shot.position.x][shot.position.y] = shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
+            field[shot.position.x][shot.position.y] |= shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
         });
         return field;
     }
@@ -119,8 +119,13 @@ export class Battlefield {
         differences.forEach((difference) => {
             console.log(difference);
             const $element = this.$field[difference.x][difference.y];
-            $element.removeClass(Battlefield.FIELD_CLASS[difference.from]);
-            $element.addClass(Battlefield.FIELD_CLASS[difference.to]);
+            const oldState = difference.from;
+            const newState = difference.to;
+            const removeMask = (~oldState) ^ newState;
+            const addMask = oldState ^ newState;
+
+            $element.removeClass(getFieldClasses(oldState));
+            $element.addClass(getFieldClasses(newState));
         });
         this.field = newField;
     }
@@ -150,8 +155,13 @@ function getFieldForShipAtOffset(ship, offset) {
     }
 }
 
+function getFieldClasses(field) {
+    return Object.keys(Battlefield.FIELD_CLASS).map((v) => parseInt(v, 10)).filter((value) => {
+        return (field & value) === value;
+    }).map((value) => Battlefield.FIELD_CLASS[value]).join(" ");
+}
+
 Battlefield.FIELD_CLASS = {
-    0: "sea",
     1: "ship-start-right",
     2: "ship-middle-right",
     4: "ship-end-right",
