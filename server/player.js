@@ -102,7 +102,8 @@ class Player extends EventEmitter {
      *
      * @param x
      * @param y
-     * @returns {number} -1 if the player already shot at the same position, 0 if it doesn't hit a ship, 1 if it hit a ship
+     * @returns {number} -1 if the player already shot at the same position,
+     * 0 if it doesn't hit a ship, 1 if it hit a ship, 2 if it hit a ship and destroyed it
      */
     shotAt(x, y) {
 
@@ -121,7 +122,8 @@ class Player extends EventEmitter {
         });
         if(hitShip) {
             hitShip.hits += 1;
-            return 1;
+            const shipDestroyed = hitShip.hits === hitShip.size;
+            return shipDestroyed ? 2 : 1;
         } else {
             return 0;
         }

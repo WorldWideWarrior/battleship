@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import { OwnBattlefield } from './OwnBattlefield';
 import { OpponentBattlefield } from './OpponentBattlefield';
 import { Sound } from './Sound';
+import { RingBufferPlayer } from './RingBufferPlayer';
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -15,6 +16,27 @@ let opponentBattlefield;
 const backgroundSound = new Sound("static/sound/background.mp3");
 backgroundSound.volume = 0.1;
 backgroundSound.loop = true;
+
+const hitPlayer = new RingBufferPlayer([
+    new Sound("static/sound/hit1.mp3"),
+    new Sound("static/sound/hit2.mp3", false),
+    new Sound("static/sound/hit3.mp3", false),
+]);
+const missPlayer = new RingBufferPlayer([
+    new Sound("static/sound/miss1.mp3"),
+]);
+const destroyPlayer = new RingBufferPlayer([
+    new Sound("static/sound/destroy1.mp3"),
+    new Sound("static/sound/destroy2.mp3", false),
+    new Sound("static/sound/destroy3.mp3", false),
+    new Sound("static/sound/destroy4.mp3", false),
+    new Sound("static/sound/destroy5.mp3", false),
+    new Sound("static/sound/destroy6.mp3", false),
+    new Sound("static/sound/destroy7.mp3", false),
+    new Sound("static/sound/destroy8.mp3", false),
+    new Sound("static/sound/destroy9.mp3", false),
+    new Sound("static/sound/destroy10.mp3", false),
+]);
 
 function showPlayerInput() {
     $('#player-modal').modal({
@@ -180,6 +202,18 @@ $(document).ready(() => {
     socket.on('game-state', (snapshot) => {
         onGameState(snapshot);
     });
+
+    socket.on("miss", () => {
+        missPlayer.playNext();
+    });
+
+    socket.on("hit", (hitsInARow) => {
+        hitPlayer.playAtIndex(hitsInARow);
+    });
+
+    socket.on("destroyed", (shipsDestroyed) => {
+        destroyPlayer.playAtIndex(shipsDestroyed);
+    })
 });
 
 // validate player name

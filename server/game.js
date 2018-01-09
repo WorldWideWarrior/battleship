@@ -6,6 +6,7 @@ class Game {
         this.previousState = undefined;
         this.player1 = player1;
         this.player2 = player2;
+        this.hitsInARow = 0;
 
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
@@ -70,13 +71,20 @@ class Game {
             return;
         } else if(shotResult === 0) {
             //miss
+            this.hitsInARow = 0;
             const nextState = this.state === Game.SERVER_STATE.TURN_OF_PLAYER_ONE ?
                 Game.SERVER_STATE.TURN_OF_PLAYER_TWO : Game.SERVER_STATE.TURN_OF_PLAYER_ONE;
             this.changeState(nextState);
+            this.broadcast(Game.SERVER_EVENT.MISS);
 
-        } else if (shotResult === 1) {
+        } else if (shotResult === 1 || shotResult === 2) {
             //hit
+            this.hitsInARow += 1;
             this.changeState(this.state);
+            this.broadcast(Game.SERVER_EVENT.HIT, this.hitsInARow);
+            if(shotResult === 2) {
+                this.broadcast(Game.SERVER_EVENT.DESTROYED, opponent.destroyedShips.length);
+            }
         }
     }
 
@@ -128,6 +136,12 @@ class Game {
 
         }
     }
+    broadcast() {
+        const args = Array.from(arguments);
+        this.allPlayers.forEach((player) => {
+            player.socket.emit.apply(player.socket, args);
+        });
+    }
 }
 
 class StateChecker {
@@ -159,7 +173,10 @@ Game.CLIENT_EVENT = {
  * @type {Object.<String, String>}
  */
 Game.SERVER_EVENT = {
-  GAME_STATE: 'game-state',
+    GAME_STATE: 'game-state',
+    MISS: 'miss',
+    HIT: 'hit',
+    DESTROYED: 'destroyed',
 };
 
 /**
