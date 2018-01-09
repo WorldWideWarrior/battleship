@@ -146,7 +146,7 @@ $(document).ready(() => {
 
     // create tables
     const fieldOwn = $('#field-own');
-    ownBattlefield = new OwnBattlefield(fieldOwn);
+    ownBattlefield = new OwnBattlefield(fieldOwn, socket);
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent);
 
