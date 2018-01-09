@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
-import { Battlefield } from './Battlefield';
+import { OwnBattlefield } from './OwnBattlefield';
+import { OpponentBattlefield } from './OpponentBattlefield';
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -137,9 +138,9 @@ $(document).ready(() => {
 
     // create tables
     const fieldOwn = $('#field-own');
-    new Battlefield(fieldOwn);
+    new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
-    new Battlefield(fieldOpponent);
+    new OpponentBattlefield(fieldOpponent);
 
     socket = io('localhost:3000');
 
