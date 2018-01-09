@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
 import { OwnBattlefield } from './OwnBattlefield';
 import { OpponentBattlefield } from './OpponentBattlefield';
+import { Sound } from './Sound';
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -10,6 +11,9 @@ let ownName = localStorage.getItem("name");
 let opponentName;
 let ownBattlefield;
 let opponentBattlefield;
+
+const backgroundSound = new Sound("static/sound/background.mp3");
+backgroundSound.setVolume(0.1);
 
 function showPlayerInput() {
     $('#player-modal').modal({
@@ -156,6 +160,7 @@ $(document).ready(() => {
     opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
 
     socket.on('connect', () => {
+        backgroundSound.playFromStart();
         socket.emit('client-id', clientId);
         if(ownName) {
             setOwnName(ownName);
