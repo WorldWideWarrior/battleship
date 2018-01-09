@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { Battlefield } from './Battlefield';
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -10,24 +11,6 @@ let myShips;
 let otherShips;
 let myShots;
 let otherShots;
-
-function generateTable(table, rows, columns) {
-    for (let row = 0; row < rows; row++) {
-        const rowElement = $('<tr></tr>');
-        for (let column = 0; column < columns; column++) {
-            const columnElement = $('<td/>');
-
-            (function (clickRow, clickColumn) {
-                columnElement.on('click', () => {
-                    console.log(`Click: ${clickRow}, ${clickColumn}`);
-                });
-            }(row, column));
-
-            rowElement.append(columnElement);
-        }
-        table.append(rowElement);
-    }
-}
 
 function showPlayerInput() {
     $('#player-modal').modal({
@@ -154,9 +137,9 @@ $(document).ready(() => {
 
     // create tables
     const fieldOwn = $('#field-own');
-    generateTable(fieldOwn, 10, 10);
+    new Battlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
-    generateTable(fieldOpponent, 10, 10);
+    new Battlefield(fieldOpponent);
 
     socket = io('localhost:3000');
 
