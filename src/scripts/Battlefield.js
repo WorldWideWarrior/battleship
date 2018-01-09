@@ -77,6 +77,7 @@ export class Battlefield {
                 let y = ship.position.y;
                 if(ship.orientation === "down") {
                     y += offset;
+
                 } else if(ship.orientation === "right") {
                     x += offset;
                 } else {
@@ -84,7 +85,7 @@ export class Battlefield {
                     break;
                 }
                 console.log(ship, x, y);
-                field[x][y] = Battlefield.FIELD.SHIP;
+                field[x][y] = getFieldForShipAtOffset(ship, offset);
             }
         });
 
@@ -128,14 +129,37 @@ export class Battlefield {
 
 Battlefield.FIELD = {
     SEA: 0,
-    SHIP: 1,
-    HIT: 2,
-    MISS: 3,
+    SHIP_START_RIGHT: 1 << 0,
+    SHIP_MIDDLE_RIGHT: 1 << 1,
+    SHIP_END_RIGHT: 1 << 2,
+    SHIP_START_DOWN: 1 << 3,
+    SHIP_MIDDLE_DOWN: 1 << 4,
+    SHIP_END_DOWN: 1 << 5,
+    HIT: 1 << 6,
+    MISS: 1 << 7,
 };
+
+function getFieldForShipAtOffset(ship, offset) {
+    const start = ship.orientation === "right" ? Battlefield.FIELD.SHIP_START_RIGHT : Battlefield.FIELD.SHIP_START_DOWN;
+    if(offset === 0) {
+        return start;
+    } else if (offset === (ship.size - 1)) {
+        return start << 2;
+    } else {
+        return start << 1;
+    }
+}
 
 Battlefield.FIELD_CLASS = {
     0: "sea",
-    1: "ship",
-    2: "hit",
-    3: "miss",
+    1: "ship-start-right",
+    2: "ship-middle-right",
+    4: "ship-end-right",
+    8: "ship-start-down",
+    16: "ship-middle-down",
+    32: "ship-end-down",
+    64: "hit",
+    128: "miss",
 };
+
+

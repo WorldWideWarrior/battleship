@@ -87,27 +87,59 @@ input::-webkit-file-upload-button {
 	margin: 20px;
 
 	td {
-		padding: 20px;
+		$size: 20px;
+		$borderSize: 2px;
 
-		border: white 2px solid;
-	}
+		padding: $size;
 
-
-
-
-	td.sea {
-		background-color: #62e3f5;
-		&:hover {
-		  background-color: #44c2f5;
+		border: white $borderSize solid;
+		&.sea {
+			background-color: #62e3f5;
+			&:hover {
+				background-color: #44c2f5;
+			}
 		}
-	}
-	td.ship {
-		background-color: #000;
-	}
-	td.hit {
-		background-color: #0F0;
-	}
-	td.miss {
-		background-color: #F00;
+		&.ship-start-right,
+		&.ship-middle-right,
+		&.ship-end-right,
+		&.ship-start-down,
+		&.ship-middle-down,
+		&.ship-end-down {
+			background-color: #000;
+		}
+		&.ship-start-right {
+			padding-right: $size + $borderSize;
+			border-right: none;
+		}
+		&.ship-middle-right {
+			padding-right: $size + $borderSize;
+			padding-left: $size + $borderSize;
+			border-right: none;
+			border-left: none;
+		}
+		&.ship-end-right {
+			padding-left: $size + $borderSize;
+			border-left: none;
+		}
+		&.ship-start-down {
+			padding-bottom: $size + $borderSize;
+			border-bottom: none;
+		}
+		&.ship-middle-down {
+			padding-top: $size + $borderSize;
+			padding-bottom: $size + $borderSize;
+			border-top: none;
+			border-bottom: none;
+		}
+		&.ship-end-down{
+			padding-top: $size + $borderSize;
+			border-top: none;
+		}
+		&.hit {
+			background-color: #0F0;
+		}
+		&.miss {
+			background-color: #F00;
+		}
 	}
 }
