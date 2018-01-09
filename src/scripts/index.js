@@ -10,10 +10,6 @@ let ownName = localStorage.getItem("name");
 let opponentName;
 let ownBattlefield;
 let opponentBattlefield;
-let myShips;
-let otherShips;
-let myShots;
-let otherShots;
 
 function showPlayerInput() {
     $('#player-modal').modal({
@@ -94,19 +90,33 @@ function parseShips(snapshot) {
     console.log(snapshot.myShips);
     if (snapshot.myShips) {
         ownBattlefield.ships = snapshot.myShips;
-        ownBattlefield.updateField();
     }
     console.log(snapshot.otherShips);
     if (snapshot.otherShips) {
         opponentBattlefield.ships = snapshot.otherShips;
-        opponentBattlefield.updateField();
     }
 }
 
 function parseShots(snapshot) {
-    if (snapshot.myShots) { myShots = snapshot.myShots; }
-    if (snapshot.otherShots) { otherShots = snapshot.otherShots; }
+    if (snapshot.myShots) {
+        ownBattlefield.shots = snapshot.myShots;
+    }
+    if (snapshot.otherShots) {
+        opponentBattlefield.shots = snapshot.otherShots;
+    }
 }
+
+function parseShipsAndShots(snapshot) {
+    parseShips(snapshot);
+    parseShots(snapshot);
+    if(snapshot.myShips || snapshot.myShots) {
+        ownBattlefield.updateField();
+    }
+    if(snapshot.otherShips || snapshot.otherShots) {
+        opponentBattlefield.updateField();
+    }
+}
+
 
 function parseNames(snapshot) {
     setOwnName(snapshot.myName);
@@ -121,36 +131,29 @@ function onGameState(snapshot) {
         closeWaitingModal();
         showPlayerInput();
     } else if (snapshot.state === 'attack') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
     } else if (snapshot.state === 'defence') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
     } else if (snapshot.state === 'other-player-disconnect') {
         showDisconnectModal();
     } else if (snapshot.state === 'game-over') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
         showGameOverModal(snapshot.winner);
     }
 }
 
 $(document).ready(() => {
-    myShips = [];
-    otherShips = [];
-    myShots = [];
-    otherShots = [];
+
+    socket = io('localhost:3000');
 
     // create tables
     const fieldOwn = $('#field-own');
-    ownBattlefield = new OwnBattlefield(fieldOwn, socket);
+    ownBattlefield = new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
-    opponentBattlefield = new OpponentBattlefield(fieldOpponent);
-
-    socket = io('localhost:3000');
+    opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
 
     socket.on('connect', () => {
         socket.emit('client-id', clientId);

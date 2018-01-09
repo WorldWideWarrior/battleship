@@ -30,10 +30,28 @@ function sizeOfShip(shipAsString) {
     }
 }
 
+/**
+ *
+ * @param x
+ * @param y
+ * @param ship {{size: number, position: {x: number, y: number}, orientation: string}}
+ * @returns {boolean}
+ */
+function isPointOnShip(x, y, ship) {
+    if(ship.orientation === "right") {
+        return ship.position.y === y &&
+            x >= ship.position.x && x < (ship.position.x + ship.size);
+    } else {
+        return ship.position.x === x &&
+            y >= ship.position.y && y < (ship.position.y + ship.size);
+    }
+}
+
 module.exports = {
     CARRIER,
     BATTLESHIP,
     CRUISER,
     DESTROYER,
     sizeOfShip: sizeOfShip,
+    isPointOnShip: isPointOnShip,
 };

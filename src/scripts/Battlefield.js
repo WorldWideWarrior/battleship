@@ -23,7 +23,7 @@ export class Battlefield {
         this.field = this.generateEmptyField();
 
         this.ships = [];
-        this.hits = [];
+        this.shots = [];
     }
 
     generateDomField(table) {
@@ -68,8 +68,9 @@ export class Battlefield {
         console.debug(`Click: ${x}, ${y}`);
     }
 
-    generateFieldState(ships, hits) {
+    generateFieldState(ships, shots) {
         let field = this.generateEmptyField();
+
         ships.forEach((ship) => {
             for(let offset = 0; offset < ship.size; offset++) {
                 let x = ship.position.x;
@@ -85,6 +86,10 @@ export class Battlefield {
                 console.log(ship, x, y);
                 field[x][y] = Battlefield.FIELD.SHIP;
             }
+        });
+
+        shots.forEach((shot) => {
+            field[shot.position.x][shot.position.y] = shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
         });
         return field;
     }
@@ -107,7 +112,7 @@ export class Battlefield {
     }
 
     updateField() {
-        const newField = this.generateFieldState(this.ships, this.hits);
+        const newField = this.generateFieldState(this.ships, this.shots);
         const differences = this.calculateDifferencesBetweenFields(this.field, newField);
         console.log(differences);
         differences.forEach((difference) => {
@@ -124,9 +129,13 @@ export class Battlefield {
 Battlefield.FIELD = {
     SEA: 0,
     SHIP: 1,
+    HIT: 2,
+    MISS: 3,
 };
 
 Battlefield.FIELD_CLASS = {
     0: "sea",
     1: "ship",
+    2: "hit",
+    3: "miss",
 };
