@@ -10,17 +10,10 @@ class Game {
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
 
-        player1.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
-        player2.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
-
         console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
 
         //start game
         this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
-    }
-
-    onShotAt(player, x, y) {
-        console.log(`Player: ${player.debugDescription}, x: ${x}, y: ${y}`);
     }
 
     get allPlayers() {

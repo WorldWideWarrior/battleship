@@ -11,7 +11,6 @@ class Player extends EventEmitter {
         this.ships = this.generateShips();
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
-        this.bindedShotAt = this.onShotAt.bind(this);
 
         this.addListenerToSocket(socket);
 
@@ -30,12 +29,10 @@ class Player extends EventEmitter {
 
     removeListenerFromSocket(socket) {
         socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        socket.removeListener(Player.CLIENT_EVENT.SHOT_AT, this.bindedShotAt);
     }
 
     addListenerToSocket(socket) {
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
-        socket.on(Player.CLIENT_EVENT.SHOT_AT, this.bindedShotAt);
     }
 
     sendOpponentName(opponent, name) {
@@ -69,10 +66,6 @@ class Player extends EventEmitter {
         console.debug(`name set ${this.debugDescription}`);
     }
 
-    onShotAt(x, y) {
-        this.emit(Player.EVENT.SHOT_AT, this, x, y);
-    }
-
     setName(name) {
         this.name = name;
     }
@@ -103,7 +96,6 @@ class Player extends EventEmitter {
  */
 Player.EVENT = {
     CHANGE_NAME: 'change-name',
-    SHOT_AT: 'shot-at',
 };
 /**
  * events that the client emits (socket.io)
@@ -111,7 +103,6 @@ Player.EVENT = {
  */
 Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
-    SHOT_AT: 'shot-at',
 };
 /**
  * events that the server emits (socket.io)

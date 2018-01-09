@@ -144,13 +144,13 @@ $(document).ready(() => {
     myShots = [];
     otherShots = [];
 
-    socket = io('localhost:3000');
-
     // create tables
     const fieldOwn = $('#field-own');
     ownBattlefield = new OwnBattlefield(fieldOwn, socket);
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent);
+
+    socket = io('localhost:3000');
 
     socket.on('connect', () => {
         socket.emit('client-id', clientId);
