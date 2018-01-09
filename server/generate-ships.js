@@ -68,11 +68,11 @@ function tryToPlaceShip(shipToPlace) {
             xStart = newShip.position.x - 1;
             yStart = newShip.position.y - 1;
             if(orientation === DOWN) {
-                yEnd = yStart + 2;
-                xEnd = xStart + 1 + shipToPlace.size;
-            } else {
                 xEnd = xStart + 2;
                 yEnd = yStart + 1 + shipToPlace.size;
+            } else {
+                xEnd = xStart + 1 + shipToPlace.size;
+                yEnd = yStart + 2;
             }
 
             for(let x = xStart;x <= xEnd; x++) {
@@ -92,7 +92,7 @@ function tryToPlaceShip(shipToPlace) {
 function canPlaceShip(ship) {
     let shipPosition;
 
-    if(ship.orientation === "down") {
+    if(ship.orientation === "right") {
         //check borders
         if(ship.position.x + Ships.sizeOfShip(ship.name) > FIELD_SIZE)
             return false;
@@ -102,7 +102,7 @@ function canPlaceShip(ship) {
             if(fieldsNotToUseContains(shipPosition, ship.position.y))
                 return false;
         }
-    } else if(ship.orientation === "right") {
+    } else if(ship.orientation === "down") {
         //check borders
         if(ship.position.y + Ships. sizeOfShip(ship.name) > FIELD_SIZE)
             return false;
