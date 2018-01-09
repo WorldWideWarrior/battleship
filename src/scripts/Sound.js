@@ -19,7 +19,16 @@ export class Sound {
     stop() {
         this.sound.pause();
     }
-    setVolume(volume) {
+    get volume() {
+        return this.sound.volume;
+    }
+    set volume(volume) {
         this.sound.volume = volume;
+    }
+    get loop() {
+        return this.sound.loop;
+    }
+    set loop(loop) {
+        this.sound.loop = true;
     }
 }

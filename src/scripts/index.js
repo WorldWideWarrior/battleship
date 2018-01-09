@@ -13,7 +13,8 @@ let ownBattlefield;
 let opponentBattlefield;
 
 const backgroundSound = new Sound("static/sound/background.mp3");
-backgroundSound.setVolume(0.1);
+backgroundSound.volume = 0.1;
+backgroundSound.loop = true;
 
 function showPlayerInput() {
     $('#player-modal').modal({
