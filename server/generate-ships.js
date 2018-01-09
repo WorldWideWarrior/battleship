@@ -44,12 +44,12 @@ function tryToPlaceShip(shipToPlace) {
         let xPosition, yPosition;
         if(orientation === DOWN) {
             orientationString = "down";
-            yPosition = getRandomInt(0, FIELD_SIZE - 1);
-            xPosition = getRandomInt(0, FIELD_SIZE - 1 - shipToPlace.size);
+            xPosition = getRandomInt(0, FIELD_SIZE - 1);
+            yPosition = getRandomInt(0, FIELD_SIZE - 1 - shipToPlace.size);
         } else {
             orientationString = "right";
-            yPosition = getRandomInt(0, FIELD_SIZE - 1 - shipToPlace.size);
-            xPosition = getRandomInt(0, FIELD_SIZE - 1);
+            xPosition = getRandomInt(0, FIELD_SIZE - 1 - shipToPlace.size);
+            yPosition = getRandomInt(0, FIELD_SIZE - 1);
         }
 
         let newShip = {
@@ -59,6 +59,7 @@ function tryToPlaceShip(shipToPlace) {
                 y: yPosition,
             },
             orientation: orientationString,
+            size: shipToPlace.size,
         };
 
         if(canPlaceShip(newShip)) {
