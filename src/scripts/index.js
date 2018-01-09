@@ -8,6 +8,8 @@ let socket;
 let actualState;
 let ownName = localStorage.getItem("name");
 let opponentName;
+let ownBattlefield;
+let opponentBattlefield;
 let myShips;
 let otherShips;
 let myShots;
@@ -90,9 +92,15 @@ function setOpponentName(name) {
 
 function parseShips(snapshot) {
     console.log(snapshot.myShips);
-    if (snapshot.myShips) { myShips = snapshot.myShips; }
+    if (snapshot.myShips) {
+        ownBattlefield.ships = snapshot.myShips;
+        ownBattlefield.updateField();
+    }
     console.log(snapshot.otherShips);
-    if (snapshot.otherShips) { otherShips = snapshot.otherShips; }
+    if (snapshot.otherShips) {
+        opponentBattlefield.ships = snapshot.otherShips;
+        opponentBattlefield.updateField();
+    }
 }
 
 function parseShots(snapshot) {
@@ -138,9 +146,9 @@ $(document).ready(() => {
 
     // create tables
     const fieldOwn = $('#field-own');
-    new OwnBattlefield(fieldOwn);
+    ownBattlefield = new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
-    new OpponentBattlefield(fieldOpponent);
+    opponentBattlefield = new OpponentBattlefield(fieldOpponent);
 
     socket = io('localhost:3000');
 

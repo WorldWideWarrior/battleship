@@ -74,7 +74,7 @@ input::-webkit-file-upload-button {
     width: 100%;
     font-size: 1rem;
 	}
-	
+
 	.hex-value {
 		color: #8f99ac;
 		font-size: 12px;
@@ -83,16 +83,25 @@ input::-webkit-file-upload-button {
 }
 
 .field {
-  float: left;
-  margin: 20px;
+	float: left;
+	margin: 20px;
 
-  td {
-    padding: 20px;
-    background-color: #62e3f5;
-    border: white 2px solid;
-  }
+	td {
+		padding: 20px;
 
-  td:hover {
-    background-color: #44c2f5;
-  }
+		border: white 2px solid;
+	}
+
+
+
+
+	td.sea {
+		background-color: #62e3f5;
+		&.hover {
+		  background-color: #44c2f5;
+		}
+	}
+	td.ship {
+		background-color: #000;
+	}
 }

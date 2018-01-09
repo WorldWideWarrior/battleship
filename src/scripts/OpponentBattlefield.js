@@ -6,6 +6,6 @@ export class OpponentBattlefield extends Battlefield {
     }
 
     onClickOnField(x, y) {
-        console.debug(`Click on opponent: ${x}, ${y}`);
+        //do nothing
     }
 }
