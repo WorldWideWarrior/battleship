@@ -89,10 +89,8 @@ class Game {
             }
 
             if(this.hasWinner()) {
-                console.log(`Winner: ${winner}`);
                 this.changeState(Game.SERVER_STATE.GAME_OVER);
             } else {
-                console.log(`No winner`);
                 this.changeState(this.state);
             }
         }
@@ -112,7 +110,7 @@ class Game {
     }
 
     hasWinner() {
-        this.allPlayers.some((player) => player.areAllShipsDestroyed());
+        return this.allPlayers.some((player) => player.areAllShipsDestroyed());
     }
 
 
