@@ -82,9 +82,15 @@ input::-webkit-file-upload-button {
 	}
 }
 
+$see-background: #62e3f5;
+$see-background-color: #44c2f5;
+$transition-time: 400ms;
+
 .field {
 	float: left;
 	margin: 20px;
+
+	transition: opacity $transition-time;
 
 	td {
 		$size: 16px;
@@ -94,9 +100,9 @@ input::-webkit-file-upload-button {
 
 		border: white $borderSize solid;
 
-		background-color: #62e3f5;
+		background-color: $see-background;
 		&:hover {
-			background-color: #44c2f5;
+			background-color: $see-background-color;
 		}
 
 		&.ship-start-right,
@@ -141,6 +147,17 @@ input::-webkit-file-upload-button {
 		}
 		&.miss {
 			background-color: #F00;
+		}
+	}
+}
+
+.deactivated-field {
+	opacity: 0.2;
+	transition: opacity $transition-time;
+
+	td{
+		&:hover {
+			background-color: $see-background;
 		}
 	}
 }
