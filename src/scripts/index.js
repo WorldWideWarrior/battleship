@@ -146,8 +146,11 @@ function parseShipsAndShots(snapshot) {
 
 
 function parseNames(snapshot) {
-    setOwnName(snapshot.myName);
-    setOpponentName(snapshot.otherName);
+    if(snapshot.myName)
+        setOwnName(snapshot.myName);
+
+    if(snapshot.otherName)
+        setOpponentName(snapshot.otherName);
 }
 
 function onGameState(snapshot) {
@@ -183,6 +186,9 @@ $(document).ready(() => {
     ownBattlefield = new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
+
+    if(!ownName)
+        showPlayerInput();
 
     socket.on('connect', () => {
         backgroundSound.playFromStart();
