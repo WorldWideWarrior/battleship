@@ -105,6 +105,9 @@ function setOwnName(name) {
     ownName = name;
     localStorage.setItem("name", name);
     $('#player1Name').text(`You: ${name}`);
+}
+
+function sendOwnName() {
     socket.emit('set-name', ownName);
 }
 
@@ -198,7 +201,7 @@ $(document).ready(() => {
         backgroundSound.playFromStart();
         socket.emit('client-id', clientId);
         if(ownName) {
-            setOwnName(ownName);
+            sendOwnName();
         }
     });
 
@@ -234,6 +237,7 @@ $('#buttonReadyPlayerModal').click(() => {
 
     if (playerName) {
         setOwnName(playerName);
+        sendOwnName();
         $('#player-modal').modal('hide');
     }
 });

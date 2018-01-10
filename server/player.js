@@ -16,6 +16,7 @@ class Player extends EventEmitter {
 
         this.bindedOnNameSet = this.onNameSet.bind(this);
         this.bindedOnShotAt = this.onShotAt.bind(this);
+        this.bindedOnDisconnected = this.onDisconnect.bind(this);
 
         this.addListenerToSocket(socket);
 
@@ -38,11 +39,13 @@ class Player extends EventEmitter {
     removeListenerFromSocket(socket) {
         socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
         socket.removeListener(Player.CLIENT_EVENT.SHOT_AT, this.bindedOnShotAt);
+        socket.removeListener(Player.CLIENT_EVENT.DISCONNECT, this.bindedOnDisconnected);
     }
 
     addListenerToSocket(socket) {
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
         socket.on(Player.CLIENT_EVENT.SHOT_AT, this.bindedOnShotAt);
+        socket.on(Player.CLIENT_EVENT.DISCONNECT, this.bindedOnDisconnected);
     }
 
     sendOpponentName(opponent, name) {
@@ -72,13 +75,14 @@ class Player extends EventEmitter {
 
     onDisconnect() {
         this.isConnected = false;
-        console.debug(`disconnected ${this.debugDescription}`);
+        console.log(`disconnected ${this.debugDescription}`);
+        this.emit(Player.EVENT.DISCONNECT, this);
     }
 
     onNameSet(name) {
         this.name = name;
+        console.log(`name set ${this.debugDescription}`);
         this.emit(Player.EVENT.CHANGE_NAME, this, name);
-        console.debug(`name set ${this.debugDescription}`);
     }
 
     onShotAt(x, y) {
@@ -140,6 +144,7 @@ class Player extends EventEmitter {
         this.socket = socket;
         this.addListenerToSocket(socket);
         console.log(`reconnected ${this.debugDescription}`);
+        this.emit(Player.EVENT.CONNECT, this);
     }
 
     get debugDescription() {
@@ -153,6 +158,8 @@ class Player extends EventEmitter {
 Player.EVENT = {
     CHANGE_NAME: 'change-name',
     SHOT_AT: 'shot-at',
+    DISCONNECT: 'disconnect',
+    CONNECT: 'connect',
 };
 /**
  * events that the client emits (socket.io)
@@ -161,6 +168,7 @@ Player.EVENT = {
 Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
     SHOT_AT: 'shot-at',
+    DISCONNECT: 'disconnect',
 };
 /**
  * events that the server emits (socket.io)

@@ -16,6 +16,7 @@ class Game {
 
         this.allPlayers.forEach((player) => {
             player.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
+            player.on(Player.EVENT.DISCONNECT, this.onPlayerDisconnect.bind(this));
         });
 
         console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
@@ -44,6 +45,15 @@ class Game {
 
     getOpponentOf(player) {
         return this.player1 === player ? this.player2 : this.player1;
+    }
+
+    onPlayerDisconnect(player) {
+        const somePlayerConnected = this.allPlayers.some((player) => player.isConnected);
+        if(!somePlayerConnected) {
+            //TODO shutdown game
+            return;
+        }
+        this.changeState(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED);
     }
 
     reconnect(playerId, socket) {
