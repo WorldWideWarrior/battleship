@@ -31,11 +31,13 @@ export class Battlefield {
     deactivate() {
         this.activated = false;
         this.table.addClass(DEACTIVATED_CLASS);
+        this.table.removeClass(ACTIVATED_CLASS);
     }
 
     activate() {
         this.activated = true;
         this.table.removeClass(DEACTIVATED_CLASS);
+        this.table.addClass(ACTIVATED_CLASS);
     }
 
     generateDomField(table) {
@@ -102,6 +104,7 @@ export class Battlefield {
         });
 
         shots.forEach((shot) => {
+            field[shot.position.x][shot.position.y] &= ~Battlefield.FIELD.SEA; //remove sea flag
             field[shot.position.x][shot.position.y] |= shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
         });
         return field;
@@ -174,6 +177,7 @@ function getFieldClasses(field) {
 }
 
 const DEACTIVATED_CLASS = "deactivated-field";
+const ACTIVATED_CLASS = "activated-field"
 
 Battlefield.FIELD_CLASS = {
     1: "ship-start-right",
