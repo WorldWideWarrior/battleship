@@ -186,7 +186,7 @@ function onGameState(snapshot) {
 
 $(document).ready(() => {
 
-    socket = io('localhost:3000');
+    socket = io(location.hostname +':3000');
 
     // create tables
     const fieldOwn = $('#field-own');
