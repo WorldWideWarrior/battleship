@@ -160,9 +160,11 @@ function onGameState(snapshot) {
     } else if (snapshot.state === 'attack') {
         parseShipsAndShots(snapshot);
         parseNames(snapshot);
+        opponentBattlefield.activate();
     } else if (snapshot.state === 'defence') {
         parseShipsAndShots(snapshot);
         parseNames(snapshot);
+        opponentBattlefield.deactivate();
     } else if (snapshot.state === 'other-player-disconnect') {
         showDisconnectModal();
     } else if (snapshot.state === 'game-over') {

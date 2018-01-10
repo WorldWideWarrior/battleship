@@ -84,6 +84,8 @@ input::-webkit-file-upload-button {
 
 $see-background: #62e3f5;
 $see-background-color: #44c2f5;
+$hit-background: #0F0;
+$miss-background: #F00;
 $transition-time: 400ms;
 
 .field {
@@ -100,8 +102,10 @@ $transition-time: 400ms;
 
 		border: white $borderSize solid;
 
+		transition: background-color $transition-time;
+
 		background-color: $see-background;
-		&:hover {
+		&.sea:hover {
 			background-color: $see-background-color;
 		}
 
@@ -143,20 +147,20 @@ $transition-time: 400ms;
 			border-top-width: 0;
 		}
 		&.hit {
-			background-color: #0F0;
+			background-color: $hit-background !important;
 		}
 		&.miss {
-			background-color: #F00;
+			background-color: $miss-background !important;
 		}
 	}
 }
 
 .deactivated-field {
-	opacity: 0.2;
+	opacity: 0.4;
 	transition: opacity $transition-time;
 
 	td{
-		&:hover {
+		&.sea:hover {
 			background-color: $see-background;
 		}
 	}

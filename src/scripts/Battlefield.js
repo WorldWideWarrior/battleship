@@ -26,6 +26,14 @@ export class Battlefield {
         this.shots = [];
     }
 
+    deactivate() {
+        this.table.addClass(DEACTIVATED_CLASS);
+    }
+
+    activate() {
+        this.table.removeClass(DEACTIVATED_CLASS);
+    }
+
     generateDomField(table) {
         //initialize $field
         const $field = new Array(this.width);
@@ -133,7 +141,6 @@ export class Battlefield {
 }
 
 Battlefield.FIELD = {
-    SEA: 0,
     SHIP_START_RIGHT: 1 << 0,
     SHIP_MIDDLE_RIGHT: 1 << 1,
     SHIP_END_RIGHT: 1 << 2,
@@ -142,6 +149,7 @@ Battlefield.FIELD = {
     SHIP_END_DOWN: 1 << 5,
     HIT: 1 << 6,
     MISS: 1 << 7,
+    SEA: 1 << 8,
 };
 
 function getFieldForShipAtOffset(ship, offset) {
@@ -161,6 +169,8 @@ function getFieldClasses(field) {
     }).map((value) => Battlefield.FIELD_CLASS[value]).join(" ");
 }
 
+const DEACTIVATED_CLASS = "deactivated-field";
+
 Battlefield.FIELD_CLASS = {
     1: "ship-start-right",
     2: "ship-middle-right",
@@ -170,6 +180,7 @@ Battlefield.FIELD_CLASS = {
     32: "ship-end-down",
     64: "hit",
     128: "miss",
+    256: "sea",
 };
 
 
