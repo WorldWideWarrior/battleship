@@ -80,12 +80,33 @@ class Game {
         } else if (shotResult === 1 || shotResult === 2) {
             //hit
             this.hitsInARow += 1;
-            this.changeState(this.state);
             this.broadcast(Game.SERVER_EVENT.HIT, this.hitsInARow);
             if(shotResult === 2) {
                 this.broadcast(Game.SERVER_EVENT.DESTROYED, opponent.destroyedShips.length);
             }
+
+            const winner = this.getWinner();
+            if(winner) {
+                console.log(`Winner: ${winner}`);
+                this.changeState(Game.SERVER_STATE.GAME_OVER);
+            } else {
+                console.log(`No winner`);
+                this.changeState(this.state);
+            }
         }
+    }
+
+    /**
+     * @returns name of winning player or undefined
+     */
+    getWinner() {
+        if(this.player1.areAllShipsDestroyed())
+            return this.player2.name;
+
+        if(this.player2.areAllShipsDestroyed())
+            return this.player1.name;
+
+        return undefined;
     }
 
     canChangeState(fromState, toState) {

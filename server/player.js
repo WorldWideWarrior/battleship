@@ -64,6 +64,8 @@ class Player extends EventEmitter {
             myShots: this.shots,
             //TODO send only new shots
             otherShots: opponent.shots,
+            //TODO only send on gameOver
+            winner: game.getWinner(),
         };
 
         this.socket.emit(Player.SERVER_EVENT.GAME_STATE, snapshot);
@@ -127,6 +129,16 @@ class Player extends EventEmitter {
         } else {
             return 0;
         }
+    }
+
+    areAllShipsDestroyed() {
+        let allShipsDestroyed = true;
+
+        this.ships.forEach((ship) => {
+            if(ship.hits !== ship.size)
+                allShipsDestroyed = false;
+        });
+        return allShipsDestroyed;
     }
 
     reconnect(socket) {
