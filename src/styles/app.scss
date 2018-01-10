@@ -181,7 +181,7 @@ $transition-time: 400ms;
 
 .deactivated-field {
 	opacity: 0.4;
-	transition: opacity $transition-time;
+	transition: opacity $transition-time 400ms;
 
 	td{
 		&.sea:hover {
