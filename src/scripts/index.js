@@ -113,6 +113,10 @@ function setOpponentName(name) {
     $('#player2Name').text(`Opponent: ${name}`);
 }
 
+function restart() {
+    socket.emit('new-game');
+}
+
 function parseShips(snapshot) {
     console.log(snapshot.myShips);
     if (snapshot.myShips) {
@@ -232,4 +236,9 @@ $('#buttonReadyPlayerModal').click(() => {
         setOwnName(playerName);
         $('#player-modal').modal('hide');
     }
+});
+
+//restart after gameOver
+$('#buttonRestart').click(() => {
+    restart();
 });
