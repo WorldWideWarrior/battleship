@@ -105,7 +105,6 @@ export class Battlefield {
                     console.error(`unknown orientation ${ship.orientation} for ship ${ship.name}`);
                     break;
                 }
-                console.log(ship, x, y);
                 field[x][y] = getFieldForShipAtOffset(ship, offset);
             }
         });
@@ -137,9 +136,7 @@ export class Battlefield {
     updateField() {
         const newField = this.generateFieldState(this.ships, this.shots);
         const differences = this.calculateDifferencesBetweenFields(this.field, newField);
-        console.log(differences);
         differences.forEach((difference) => {
-            console.log(difference);
             const $element = this.$field[difference.x][difference.y];
             const oldState = difference.from;
             const newState = difference.to;

@@ -19,19 +19,17 @@ class Game extends EventEmitter {
         this.allPlayers.forEach((player) => {
             player.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
             player.on(Player.EVENT.DISCONNECT, this.onPlayerDisconnect.bind(this));
+            player.on(Player.EVENT.CHEAT, this.onCheat.bind(this));
         });
 
         console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
 
         //start game
         this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
-
-
-        //this.destroyMostShipsOfPlayer(this.player2);
     }
 
-    destroyMostShipsOfPlayer(player) {
-        player.ships.slice(1).forEach((ship) => {
+    destroyShipsOfPlayer(ships, player) {
+        ships.forEach((ship) => {
             for(let offset = 0; offset < ship.size; offset++) {
                 let x = ship.position.x;
                 let y = ship.position.y;
@@ -137,6 +135,19 @@ class Game extends EventEmitter {
             } else {
                 this.changeState(this.state);
             }
+        }
+    }
+
+    onCheat(player, code, ...args) {
+        console.log("cheat", code, ...args);
+        const opponent = this.getOpponentOf(player);
+        switch (code) {
+            case "destroy-most-ships":
+                return this.destroyShipsOfPlayer(opponent.ships.slice(1), opponent);
+            case "destroy-all-ships":
+                return this.destroyShipsOfPlayer(opponent.ships, opponent);
+            default:
+                player.socket.emit("cheat-error", "unknown cheat code");
         }
     }
 

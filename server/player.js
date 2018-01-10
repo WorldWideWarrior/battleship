@@ -17,6 +17,7 @@ class Player extends EventEmitter {
         this.bindedOnNameSet = this.onNameSet.bind(this);
         this.bindedOnShotAt = this.onShotAt.bind(this);
         this.bindedOnDisconnected = this.onDisconnect.bind(this);
+        this.bindedOnCheat = this.onCheat.bind(this);
 
         this.addListenerToSocket(socket);
 
@@ -40,12 +41,14 @@ class Player extends EventEmitter {
         socket.removeListener(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
         socket.removeListener(Player.CLIENT_EVENT.SHOT_AT, this.bindedOnShotAt);
         socket.removeListener(Player.CLIENT_EVENT.DISCONNECT, this.bindedOnDisconnected);
+        socket.removeListener(Player.CLIENT_EVENT.CHEAT, this.bindedOnCheat);
     }
 
     addListenerToSocket(socket) {
         socket.on(Player.CLIENT_EVENT.SET_NAME, this.bindedOnNameSet);
         socket.on(Player.CLIENT_EVENT.SHOT_AT, this.bindedOnShotAt);
         socket.on(Player.CLIENT_EVENT.DISCONNECT, this.bindedOnDisconnected);
+        socket.on(Player.CLIENT_EVENT.CHEAT, this.bindedOnCheat);
     }
 
     sendOpponentName(opponent, name) {
@@ -87,6 +90,10 @@ class Player extends EventEmitter {
 
     onShotAt(x, y) {
         this.emit(Player.EVENT.SHOT_AT, this, x, y);
+    }
+
+    onCheat(code, ...args) {
+        this.emit(Player.EVENT.CHEAT, this, code, ...args);
     }
 
     setName(name) {
@@ -160,6 +167,7 @@ Player.EVENT = {
     SHOT_AT: 'shot-at',
     DISCONNECT: 'disconnect',
     CONNECT: 'connect',
+    CHEAT: 'cheat',
 };
 /**
  * events that the client emits (socket.io)
@@ -169,6 +177,7 @@ Player.CLIENT_EVENT = {
     SET_NAME: 'set-name',
     SHOT_AT: 'shot-at',
     DISCONNECT: 'disconnect',
+    CHEAT: 'cheat',
 };
 /**
  * events that the server emits (socket.io)

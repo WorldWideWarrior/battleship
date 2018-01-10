@@ -121,11 +121,9 @@ function restart() {
 }
 
 function parseShips(snapshot) {
-    console.log(snapshot.myShips);
     if (snapshot.myShips) {
         ownBattlefield.ships = snapshot.myShips;
     }
-    console.log(snapshot.otherShips);
     if (snapshot.otherShips) {
         opponentBattlefield.ships = snapshot.otherShips;
     }
@@ -240,7 +238,9 @@ $(document).ready(() => {
 
     socket.on("destroyed", (shipsDestroyed) => {
         destroyPlayer.playAtIndex(shipsDestroyed - 1);
-    })
+    });
+
+    socket.on("cheat-error", console.log.bind(console));
 });
 
 // validate player name
@@ -258,3 +258,11 @@ $('#buttonReadyPlayerModal').click(() => {
 $('#buttonRestart').click(() => {
     restart();
 });
+
+//############# CHEATS #################
+function cheat(code, ...args) {
+    socket.emit("cheat", code, ...args);
+}
+
+window.cheat = cheat;
+//######################################
