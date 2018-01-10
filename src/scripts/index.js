@@ -1,6 +1,8 @@
 import io from 'socket.io-client';
 import { OwnBattlefield } from './OwnBattlefield';
 import { OpponentBattlefield } from './OpponentBattlefield';
+import { Sound } from './Sound';
+import { RingBufferPlayer } from './RingBufferPlayer';
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -10,10 +12,31 @@ let ownName = localStorage.getItem("name");
 let opponentName;
 let ownBattlefield;
 let opponentBattlefield;
-let myShips;
-let otherShips;
-let myShots;
-let otherShots;
+
+const backgroundSound = new Sound("static/sound/background.mp3");
+backgroundSound.volume = 0.1;
+backgroundSound.loop = true;
+
+const hitPlayer = new RingBufferPlayer([
+    new Sound("static/sound/hit1.mp3"),
+    new Sound("static/sound/hit2.mp3", false),
+    new Sound("static/sound/hit3.mp3", false),
+]);
+const missPlayer = new RingBufferPlayer([
+    new Sound("static/sound/miss1.mp3"),
+]);
+const destroyPlayer = new RingBufferPlayer([
+    new Sound("static/sound/destroy1.mp3"),
+    new Sound("static/sound/destroy2.mp3", false),
+    new Sound("static/sound/destroy3.mp3", false),
+    new Sound("static/sound/destroy4.mp3", false),
+    new Sound("static/sound/destroy5.mp3", false),
+    new Sound("static/sound/destroy6.mp3", false),
+    new Sound("static/sound/destroy7.mp3", false),
+    new Sound("static/sound/destroy8.mp3", false),
+    new Sound("static/sound/destroy9.mp3", false),
+    new Sound("static/sound/destroy10.mp3", false),
+]);
 
 function showPlayerInput() {
     $('#player-modal').modal({
@@ -94,19 +117,33 @@ function parseShips(snapshot) {
     console.log(snapshot.myShips);
     if (snapshot.myShips) {
         ownBattlefield.ships = snapshot.myShips;
-        ownBattlefield.updateField();
     }
     console.log(snapshot.otherShips);
     if (snapshot.otherShips) {
         opponentBattlefield.ships = snapshot.otherShips;
-        opponentBattlefield.updateField();
     }
 }
 
 function parseShots(snapshot) {
-    if (snapshot.myShots) { myShots = snapshot.myShots; }
-    if (snapshot.otherShots) { otherShots = snapshot.otherShots; }
+    if (snapshot.myShots) {
+        ownBattlefield.shots = snapshot.myShots;
+    }
+    if (snapshot.otherShots) {
+        opponentBattlefield.shots = snapshot.otherShots;
+    }
 }
+
+function parseShipsAndShots(snapshot) {
+    parseShips(snapshot);
+    parseShots(snapshot);
+    if(snapshot.myShips || snapshot.myShots) {
+        ownBattlefield.updateField();
+    }
+    if(snapshot.otherShips || snapshot.otherShots) {
+        opponentBattlefield.updateField();
+    }
+}
+
 
 function parseNames(snapshot) {
     setOwnName(snapshot.myName);
@@ -121,38 +158,32 @@ function onGameState(snapshot) {
         closeWaitingModal();
         showPlayerInput();
     } else if (snapshot.state === 'attack') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
     } else if (snapshot.state === 'defence') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
     } else if (snapshot.state === 'other-player-disconnect') {
         showDisconnectModal();
     } else if (snapshot.state === 'game-over') {
-        parseShips(snapshot);
-        parseShots(snapshot);
+        parseShipsAndShots(snapshot);
         parseNames(snapshot);
         showGameOverModal(snapshot.winner);
     }
 }
 
 $(document).ready(() => {
-    myShips = [];
-    otherShips = [];
-    myShots = [];
-    otherShots = [];
-
-    // create tables
-    const fieldOwn = $('#field-own');
-    ownBattlefield = new OwnBattlefield(fieldOwn, socket);
-    const fieldOpponent = $('#field-opponent');
-    opponentBattlefield = new OpponentBattlefield(fieldOpponent);
 
     socket = io('localhost:3000');
 
+    // create tables
+    const fieldOwn = $('#field-own');
+    ownBattlefield = new OwnBattlefield(fieldOwn);
+    const fieldOpponent = $('#field-opponent');
+    opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
+
     socket.on('connect', () => {
+        backgroundSound.playFromStart();
         socket.emit('client-id', clientId);
         if(ownName) {
             setOwnName(ownName);
@@ -171,6 +202,18 @@ $(document).ready(() => {
     socket.on('game-state', (snapshot) => {
         onGameState(snapshot);
     });
+
+    socket.on("miss", () => {
+        missPlayer.playNext();
+    });
+
+    socket.on("hit", (hitsInARow) => {
+        hitPlayer.playAtIndex(hitsInARow);
+    });
+
+    socket.on("destroyed", (shipsDestroyed) => {
+        destroyPlayer.playAtIndex(shipsDestroyed);
+    })
 });
 
 // validate player name

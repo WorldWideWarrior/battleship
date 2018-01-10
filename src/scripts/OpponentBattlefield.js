@@ -1,11 +1,12 @@
 import { Battlefield } from './Battlefield';
 
 export class OpponentBattlefield extends Battlefield {
-    constructor(table) {
+    constructor(table, socket) {
         super(table);
+        this.socket = socket;
     }
 
     onClickOnField(x, y) {
-        //do nothing
+        this.socket.emit("shot-at", x, y);
     }
 }

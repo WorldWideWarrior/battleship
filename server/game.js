@@ -6,9 +6,14 @@ class Game {
         this.previousState = undefined;
         this.player1 = player1;
         this.player2 = player2;
+        this.hitsInARow = 0;
 
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
+
+        this.allPlayers.forEach((player) => {
+            player.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
+        });
 
         console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
 
@@ -18,6 +23,14 @@ class Game {
 
     get allPlayers() {
         return [this.player1, this.player2];
+    }
+
+    get currentPlayer() {
+        switch (this.state) {
+            case Game.SERVER_STATE.TURN_OF_PLAYER_ONE: return this.player1;
+            case Game.SERVER_STATE.TURN_OF_PLAYER_TWO: return this.player2;
+            default: return false;
+        }
     }
 
     containsPlayer(playerId) {
@@ -46,13 +59,32 @@ class Game {
         }
     }
 
-    onPlayerSetupFinished(player) {
-        if(this.state === Game.SERVER_STATE.SETUP_BOTH_PLAYERS) {
-            this.changeState(Game.SERVER_STATE.SETUP_ONE_PLAYER);
-        } else if (this.state === Game.SERVER_STATE.SETUP_ONE_PLAYER) {
-            this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
-        } else {
-            console.debug(`onPlayerSetupFinished called for ${player.debugDescription} but state is ${this.state}`);
+    onShotAt(player, x, y) {
+        if(player !== this.currentPlayer) {
+            console.debug(`${player.debugDescription} called onShotAt but is not the current player`);
+            return;
+        }
+        const opponent = this.getOpponentOf(player);
+        const shotResult = opponent.shotAt(x, y);
+        if(shotResult === -1) {
+            console.debug(`${player.debugDescription} shot already at the same position`);
+            return;
+        } else if(shotResult === 0) {
+            //miss
+            this.hitsInARow = 0;
+            const nextState = this.state === Game.SERVER_STATE.TURN_OF_PLAYER_ONE ?
+                Game.SERVER_STATE.TURN_OF_PLAYER_TWO : Game.SERVER_STATE.TURN_OF_PLAYER_ONE;
+            this.changeState(nextState);
+            this.broadcast(Game.SERVER_EVENT.MISS);
+
+        } else if (shotResult === 1 || shotResult === 2) {
+            //hit
+            this.hitsInARow += 1;
+            this.changeState(this.state);
+            this.broadcast(Game.SERVER_EVENT.HIT, this.hitsInARow);
+            if(shotResult === 2) {
+                this.broadcast(Game.SERVER_EVENT.DESTROYED, opponent.destroyedShips.length);
+            }
         }
     }
 
@@ -104,6 +136,12 @@ class Game {
 
         }
     }
+    broadcast() {
+        const args = Array.from(arguments);
+        this.allPlayers.forEach((player) => {
+            player.socket.emit.apply(player.socket, args);
+        });
+    }
 }
 
 class StateChecker {
@@ -135,7 +173,10 @@ Game.CLIENT_EVENT = {
  * @type {Object.<String, String>}
  */
 Game.SERVER_EVENT = {
-  GAME_STATE: 'game-state',
+    GAME_STATE: 'game-state',
+    MISS: 'miss',
+    HIT: 'hit',
+    DESTROYED: 'destroyed',
 };
 
 /**

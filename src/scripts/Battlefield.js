@@ -23,7 +23,7 @@ export class Battlefield {
         this.field = this.generateEmptyField();
 
         this.ships = [];
-        this.hits = [];
+        this.shots = [];
     }
 
     generateDomField(table) {
@@ -68,14 +68,16 @@ export class Battlefield {
         console.debug(`Click: ${x}, ${y}`);
     }
 
-    generateFieldState(ships, hits) {
+    generateFieldState(ships, shots) {
         let field = this.generateEmptyField();
+
         ships.forEach((ship) => {
             for(let offset = 0; offset < ship.size; offset++) {
                 let x = ship.position.x;
                 let y = ship.position.y;
                 if(ship.orientation === "down") {
                     y += offset;
+
                 } else if(ship.orientation === "right") {
                     x += offset;
                 } else {
@@ -83,8 +85,12 @@ export class Battlefield {
                     break;
                 }
                 console.log(ship, x, y);
-                field[x][y] = Battlefield.FIELD.SHIP;
+                field[x][y] = getFieldForShipAtOffset(ship, offset);
             }
+        });
+
+        shots.forEach((shot) => {
+            field[shot.position.x][shot.position.y] |= shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
         });
         return field;
     }
@@ -107,14 +113,19 @@ export class Battlefield {
     }
 
     updateField() {
-        const newField = this.generateFieldState(this.ships, this.hits);
+        const newField = this.generateFieldState(this.ships, this.shots);
         const differences = this.calculateDifferencesBetweenFields(this.field, newField);
         console.log(differences);
         differences.forEach((difference) => {
             console.log(difference);
             const $element = this.$field[difference.x][difference.y];
-            $element.removeClass(Battlefield.FIELD_CLASS[difference.from]);
-            $element.addClass(Battlefield.FIELD_CLASS[difference.to]);
+            const oldState = difference.from;
+            const newState = difference.to;
+            const removeMask = (~oldState) ^ newState;
+            const addMask = oldState ^ newState;
+
+            $element.removeClass(getFieldClasses(oldState));
+            $element.addClass(getFieldClasses(newState));
         });
         this.field = newField;
     }
@@ -123,10 +134,42 @@ export class Battlefield {
 
 Battlefield.FIELD = {
     SEA: 0,
-    SHIP: 1,
+    SHIP_START_RIGHT: 1 << 0,
+    SHIP_MIDDLE_RIGHT: 1 << 1,
+    SHIP_END_RIGHT: 1 << 2,
+    SHIP_START_DOWN: 1 << 3,
+    SHIP_MIDDLE_DOWN: 1 << 4,
+    SHIP_END_DOWN: 1 << 5,
+    HIT: 1 << 6,
+    MISS: 1 << 7,
 };
 
+function getFieldForShipAtOffset(ship, offset) {
+    const start = ship.orientation === "right" ? Battlefield.FIELD.SHIP_START_RIGHT : Battlefield.FIELD.SHIP_START_DOWN;
+    if(offset === 0) {
+        return start;
+    } else if (offset === (ship.size - 1)) {
+        return start << 2;
+    } else {
+        return start << 1;
+    }
+}
+
+function getFieldClasses(field) {
+    return Object.keys(Battlefield.FIELD_CLASS).map((v) => parseInt(v, 10)).filter((value) => {
+        return (field & value) === value;
+    }).map((value) => Battlefield.FIELD_CLASS[value]).join(" ");
+}
+
 Battlefield.FIELD_CLASS = {
-    0: "sea",
-    1: "ship",
+    1: "ship-start-right",
+    2: "ship-middle-right",
+    4: "ship-end-right",
+    8: "ship-start-down",
+    16: "ship-middle-down",
+    32: "ship-end-down",
+    64: "hit",
+    128: "miss",
 };
+
+

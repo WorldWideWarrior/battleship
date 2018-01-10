@@ -87,21 +87,60 @@ input::-webkit-file-upload-button {
 	margin: 20px;
 
 	td {
-		padding: 20px;
+		$size: 16px;
+		$borderSize: 8px;
 
-		border: white 2px solid;
-	}
+		padding: $size;
 
+		border: white $borderSize solid;
 
-
-
-	td.sea {
 		background-color: #62e3f5;
 		&:hover {
-		  background-color: #44c2f5;
+			background-color: #44c2f5;
 		}
-	}
-	td.ship {
-		background-color: #000;
+
+		&.ship-start-right,
+		&.ship-middle-right,
+		&.ship-end-right,
+		&.ship-start-down,
+		&.ship-middle-down,
+		&.ship-end-down {
+			background-color: #000;
+			transition: background-color 400ms, padding 400ms 600ms, border 400ms 600ms;
+		}
+		&.ship-start-right {
+			padding-right: $size + $borderSize/2;
+			border-right-width: 0;
+		}
+		&.ship-middle-right {
+			padding-right: $size + $borderSize/2;
+			padding-left: $size + $borderSize/2;
+			border-right-width: 0;
+			border-left-width: 0;
+		}
+		&.ship-end-right {
+			padding-left: $size + $borderSize/2;
+			border-left-width: 0;
+		}
+		&.ship-start-down {
+			padding-bottom: $size + $borderSize/2;
+			border-bottom-width: 0;
+		}
+		&.ship-middle-down {
+			padding-top: $size + $borderSize/2;
+			padding-bottom: $size + $borderSize/2;
+			border-top-width: 0;
+			border-bottom-width: 0;
+		}
+		&.ship-end-down{
+			padding-top: $size + $borderSize/2;
+			border-top-width: 0;
+		}
+		&.hit {
+			background-color: #0F0;
+		}
+		&.miss {
+			background-color: #F00;
+		}
 	}
 }
