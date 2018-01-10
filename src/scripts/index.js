@@ -14,7 +14,7 @@ let ownBattlefield;
 let opponentBattlefield;
 
 const backgroundSound = new Sound("static/sound/background.mp3");
-backgroundSound.volume = 0.1;
+backgroundSound.volume = 0.2;
 backgroundSound.loop = true;
 
 const hitPlayer = new RingBufferPlayer([
