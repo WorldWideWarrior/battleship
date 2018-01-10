@@ -73,7 +73,7 @@ function closeGameOverModal() {
 }
 
 function closeDisconnectModal() {
-    $('#player-modal').modal('hide');
+    $('#disconnect-modal').modal('hide');
 }
 
 function closeWaitingModal() {
@@ -162,7 +162,9 @@ function parseNames(snapshot) {
 
 function onGameState(snapshot) {
     actualState = snapshot.state;
-    if (snapshot.state === 'waiting-for-second-player') {
+    if (snapshot.state === 'waiting-for-other-player') {
+        ownBattlefield.reset();
+        opponentBattlefield.reset();
         showWaitingModal();
     } else if (snapshot.state === 'setup') {
         closeWaitingModal();
@@ -175,12 +177,22 @@ function onGameState(snapshot) {
         parseShipsAndShots(snapshot);
         parseNames(snapshot);
         opponentBattlefield.deactivate();
-    } else if (snapshot.state === 'other-player-disconnect') {
+    } else if (snapshot.state === 'other-player-disconnected') {
         showDisconnectModal();
     } else if (snapshot.state === 'game-over') {
         parseShipsAndShots(snapshot);
         parseNames(snapshot);
         showGameOverModal(snapshot.winner);
+    }
+
+    if(snapshot.state !== 'waiting-for-other-player') {
+        closeWaitingModal()
+    }
+    if(snapshot.state !== 'game-over') {
+        closeGameOverModal();
+    }
+    if(snapshot.state !== 'other-player-disconnected') {
+        closeDisconnectModal();
     }
 }
 

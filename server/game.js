@@ -27,7 +27,7 @@ class Game extends EventEmitter {
         this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
 
 
-        //this.destroyMostShips(this.player2);
+        //this.destroyMostShipsOfPlayer(this.player2);
     }
 
     destroyMostShipsOfPlayer(player) {
@@ -178,7 +178,7 @@ class Game extends EventEmitter {
 
     _changeState(fromState, toState) {
         if(!this.canChangeState(fromState, toState)) {
-            console.debug(`Can't change game state from ${fromState} state to ${toState} state`);
+            console.log(`Can't change game state from ${fromState} state to ${toState} state`);
             return;
         }
         this.previousState = fromState;

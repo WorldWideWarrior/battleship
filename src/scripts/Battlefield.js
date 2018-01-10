@@ -28,6 +28,13 @@ export class Battlefield {
         this.activated = true;
     }
 
+    reset() {
+        this.ships = [];
+        this.shots = [];
+        this.updateField();
+        this.activate();
+    }
+
     deactivate() {
         this.activated = false;
         this.table.addClass(DEACTIVATED_CLASS);
