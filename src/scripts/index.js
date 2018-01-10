@@ -117,7 +117,7 @@ function setOpponentName(name) {
 }
 
 function restart() {
-    socket.emit('new-game');
+    socket.emit('new-game', clientId);
 }
 
 function parseShips(snapshot) {

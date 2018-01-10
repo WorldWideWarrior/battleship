@@ -1,7 +1,9 @@
+const EventEmitter = require('events');
 const Player = require('./player.js');
 
-class Game {
+class Game extends EventEmitter {
     constructor(player1, player2) {
+        super();
         this.state = Game.SERVER_STATE.INIT;
         this.previousState = undefined;
         this.player1 = player1;
@@ -23,6 +25,28 @@ class Game {
 
         //start game
         this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
+
+
+        //this.destroyMostShips(this.player2);
+    }
+
+    destroyMostShipsOfPlayer(player) {
+        player.ships.slice(1).forEach((ship) => {
+            for(let offset = 0; offset < ship.size; offset++) {
+                let x = ship.position.x;
+                let y = ship.position.y;
+                if(ship.orientation === "down") {
+                    y += offset;
+
+                } else if(ship.orientation === "right") {
+                    x += offset;
+                } else {
+                    console.error(`unknown orientation ${ship.orientation} for ship ${ship.name}`);
+                    break;
+                }
+                this.onShotAt(this.getOpponentOf(player), x, y);
+            }
+        })
     }
 
     get allPlayers() {
@@ -50,7 +74,7 @@ class Game {
     onPlayerDisconnect(player) {
         const somePlayerConnected = this.allPlayers.some((player) => player.isConnected);
         if(!somePlayerConnected) {
-            //TODO shutdown game
+            this.closeGame();
             return;
         }
         this.changeState(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED);
@@ -70,6 +94,15 @@ class Game {
         } else {
             reconnectedPlayer.onGameStateChange(this, this.previousState, this.state);
         }
+    }
+
+    closeGame() {
+        this.allPlayers.forEach((player) => {
+            player.removeAllListeners();
+        });
+        // save highscore
+
+        this.emit(Game.EVENT.GAME_CLOSED, this);
     }
 
     onShotAt(player, x, y) {
@@ -100,6 +133,7 @@ class Game {
 
             if(this.hasWinner()) {
                 this.changeState(Game.SERVER_STATE.GAME_OVER);
+                this.closeGame();
             } else {
                 this.changeState(this.state);
             }
@@ -122,7 +156,6 @@ class Game {
     hasWinner() {
         return this.allPlayers.some((player) => player.areAllShipsDestroyed());
     }
-
 
     canChangeState(fromState, toState) {
         const s = new StateChecker(fromState, toState);
@@ -169,7 +202,6 @@ class Game {
                 return Game.CLIENT_STATE.OTHER_PLAYER_DISCONNECTED;
             case Game.SERVER_STATE.GAME_OVER:
                 return Game.CLIENT_STATE.GAME_OVER;
-
         }
     }
     broadcast() {
@@ -196,6 +228,13 @@ class StateChecker {
         return this.fromState === state && this.toState === state;
     }
 }
+/**
+ * local events from the game instance directly (not from socket.io)
+ * @type {Object.<String, String>}
+ */
+Game.EVENT = {
+    GAME_CLOSED: "game-closed",
+};
 
 /**
  * events that the client emits (socket.io)

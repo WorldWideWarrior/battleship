@@ -9,6 +9,8 @@ class Lobby {
         this.io = io;
         this.waitingPlayer = undefined;
 
+        this.binedOnGameClosed = this.onGameClosed.bind(this);
+
         io.on(Lobby.CLIENT_EVENT.CONNECTION, this.onNewSocket.bind(this));
     }
 
@@ -16,7 +18,8 @@ class Lobby {
         console.log('a user connected');
 
         socket.on(Lobby.CLIENT_EVENT.CLIENT_ID, this.onClientID.bind(this, socket));
-        socket.once(Lobby.CLIENT_EVENT.DISCONNECT, this.onSocketDisconnect.bind(this, socket))
+        socket.once(Lobby.CLIENT_EVENT.DISCONNECT, this.onSocketDisconnect.bind(this, socket));
+        socket.on(Lobby.CLIENT_EVENT.NEW_GAME, this.onNewGame.bind(this, socket));
     }
 
     onClientID(socket, clientId) {
@@ -47,6 +50,10 @@ class Lobby {
         }
     }
 
+    onNewGame(socket, clientId) {
+        this.onClientID(socket, clientId);
+    }
+
     newPlayerCreated(socket, player) {
         if (!this.waitingPlayer) {
             this.waitingPlayer = player;
@@ -63,11 +70,20 @@ class Lobby {
     }
 
     createGame(player1, player2) {
-        return new Game(player1, player2);
+        const game = new Game(player1, player2);
+        game.on(Game.EVENT.GAME_CLOSED, this.binedOnGameClosed);
+        return game;
+    }
+    removeGame(gameToRemove) {
+        gameToRemove.removeListener(Game.EVENT.GAME_CLOSED, this.binedOnGameClosed);
+        this.games = this.games.filter((game) => game !== gameToRemove);
     }
 
     getNewUserId() {
         return uuidv4();
+    }
+    onGameClosed(game) {
+        this.removeGame(game);
     }
 }
 
@@ -79,6 +95,7 @@ Lobby.CLIENT_EVENT = {
     //not a real client event because it is not send from the client but the client initialized the process
     CONNECTION: "connection",
     CLIENT_ID: "client-id",
+    NEW_GAME: "new-game",
 };
 /**
  * events that the server emits (socket.io)
