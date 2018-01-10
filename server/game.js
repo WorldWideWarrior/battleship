@@ -8,6 +8,9 @@ class Game {
         this.player2 = player2;
         this.hitsInARow = 0;
 
+        player1.name = "Player1";
+        player2.name = "Player2";
+
         player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
         player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
 
@@ -85,8 +88,7 @@ class Game {
                 this.broadcast(Game.SERVER_EVENT.DESTROYED, opponent.destroyedShips.length);
             }
 
-            const winner = this.getWinner();
-            if(winner) {
+            if(this.hasWinner()) {
                 console.log(`Winner: ${winner}`);
                 this.changeState(Game.SERVER_STATE.GAME_OVER);
             } else {
@@ -108,6 +110,11 @@ class Game {
 
         return undefined;
     }
+
+    hasWinner() {
+        this.allPlayers.some((player) => player.areAllShipsDestroyed());
+    }
+
 
     canChangeState(fromState, toState) {
         const s = new StateChecker(fromState, toState);
