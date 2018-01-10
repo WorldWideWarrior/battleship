@@ -27,10 +27,12 @@ export class Battlefield {
     }
 
     deactivate() {
+        this.activated = false;
         this.table.addClass(DEACTIVATED_CLASS);
     }
 
     activate() {
+        this.activated = true;
         this.table.removeClass(DEACTIVATED_CLASS);
     }
 

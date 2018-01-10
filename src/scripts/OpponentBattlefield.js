@@ -7,6 +7,7 @@ export class OpponentBattlefield extends Battlefield {
     }
 
     onClickOnField(x, y) {
-        this.socket.emit("shot-at", x, y);
+        if(this.activated)
+            this.socket.emit("shot-at", x, y);
     }
 }
