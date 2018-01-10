@@ -24,6 +24,8 @@ export class Battlefield {
 
         this.ships = [];
         this.shots = [];
+
+        this.activated = true;
     }
 
     deactivate() {
