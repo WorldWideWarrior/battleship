@@ -121,18 +121,8 @@ $hit-background: #0F0;
 $miss-background: #F00;
 $transition-time: 400ms;
 
-.field {
-	float: left;
-	margin: $margin-border;
-
-	transition: opacity $transition-time;
-
-	background-color: $see-background;
-
+@mixin row($size, $borderSize) {
 	td {
-		$size: 1.5vw;
-		$borderSize: 0.75vw;
-
 		padding: $size;
 
 		border: white $borderSize solid;
@@ -185,6 +175,32 @@ $transition-time: 400ms;
 			background-color: $miss-background !important;
 		}
 	}
+}
+
+.field {
+	float: left;
+	margin: $margin-border;
+
+	transition: opacity $transition-time;
+
+	background-color: $see-background;
+
+	@media screen and (orientation:portrait) {
+		float: none;
+		margin-left: auto;
+		margin-right: auto;
+		@include row(3vw, 1.5vw);
+	}
+
+	@media screen and (orientation:landscape) {
+		&#field-opponent {
+			float: right;
+		}
+
+		@include row(1.5vw, 0.75vw);
+	}
+
+
     &.activated-field {
       @for $x from 0 through 9 {
         @for $y from 0 through 9 {
