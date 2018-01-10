@@ -210,11 +210,11 @@ $(document).ready(() => {
     });
 
     socket.on("hit", (hitsInARow) => {
-        hitPlayer.playAtIndex(hitsInARow);
+        hitPlayer.playAtIndex(hitsInARow - 1);
     });
 
     socket.on("destroyed", (shipsDestroyed) => {
-        destroyPlayer.playAtIndex(shipsDestroyed);
+        destroyPlayer.playAtIndex(shipsDestroyed - 1);
     })
 });
 
