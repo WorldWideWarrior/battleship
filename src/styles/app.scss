@@ -8,6 +8,17 @@
 @import "helper/global";
 @import "helper/tabs";
 
+@function sqrt($r) {
+	$x0: 1;
+	$x1: $x0;
+
+	@for $i from 1 through 10 {
+		$x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
+		$x0: $x1;
+	}
+
+	@return $x1;
+}
 
 .subtitle{
 	margin-top: 0;
@@ -94,6 +105,8 @@ $transition-time: 400ms;
 
 	transition: opacity $transition-time;
 
+	background-color: $see-background;
+
 	td {
 		$size: 16px;
 		$borderSize: 8px;
@@ -102,13 +115,11 @@ $transition-time: 400ms;
 
 		border: white $borderSize solid;
 
-		transition: background-color $transition-time;
-
 		background-color: $see-background;
 		&.sea:hover {
 			background-color: $see-background-color;
 		}
-
+		transition: background-color $transition-time, padding $transition-time 600ms, border $transition-time 600ms;
 		&.ship-start-right,
 		&.ship-middle-right,
 		&.ship-end-right,
@@ -116,7 +127,6 @@ $transition-time: 400ms;
 		&.ship-middle-down,
 		&.ship-end-down {
 			background-color: #000;
-			transition: background-color 400ms, padding 400ms 600ms, border 400ms 600ms;
 		}
 		&.ship-start-right {
 			padding-right: $size + $borderSize/2;
@@ -153,6 +163,16 @@ $transition-time: 400ms;
 			background-color: $miss-background !important;
 		}
 	}
+    @for $x from 0 through 9 {
+        @for $y from 0 through 9 {
+            tr:nth-child(#{$x + 1}) {
+                td.sea:nth-child(#{$y + 1}) {
+                    animation: 400ms turn-activate;
+                    animation-delay: sqrt($x*$x+$y*$y) * 100ms;
+                }
+            }
+        }
+    }
 }
 
 .deactivated-field {
@@ -163,5 +183,20 @@ $transition-time: 400ms;
 		&.sea:hover {
 			background-color: $see-background;
 		}
+
 	}
 }
+
+@keyframes turn-activate {
+	0% {
+		background-color: transparent;
+	}
+	50% {
+		background-color: $see-background-color;
+	}
+	100% {
+		background-color: transparent;
+	}
+}
+
+
