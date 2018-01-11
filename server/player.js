@@ -9,6 +9,8 @@ class Player extends EventEmitter {
         this.socket = socket;
         this.id = id;
         this.ships = this.generateShips();
+
+        this.lastClientSnapshotInfo;
         /**
          * @type {[{position: {x: number, y: number}, hit: boolean}]}
          */
@@ -56,24 +58,60 @@ class Player extends EventEmitter {
     }
 
     onGameStateChange(game, fromState, toState) {
+        const snapshot = this.createSnapshot(game, fromState, toState);
+
+        this.socket.emit(Player.SERVER_EVENT.GAME_STATE, snapshot);
+    }
+
+    createSnapshot(game, fromState, toState) {
         const clientState = game.clientStateForPlayer(this, toState);
         const opponent = game.getOpponentOf(this);
+
+        const firstSnapshot = !this.lastClientSnapshotInfo;
+        const info = this.lastClientSnapshotInfo || {};
+
         const snapshot = {
+            firstSnapshot: firstSnapshot || undefined,
             state: clientState,
-            myName: this.name,
-            otherName: opponent.name,
-            //TODO only send ships once for each connection because this will never change (clients needs to be aware)
-            myShips: this.ships,
-            //TODO send only new ships
-            otherShips: opponent.destroyedShips,
-            //TODO send only new shots
-            myShots: this.shots,
-            //TODO send only new shots
-            otherShots: opponent.shots,
+            myName: this.name === info.myName ? undefined : this.name,
+            otherName: opponent.name === info.otherName ? undefined : opponent.name,
+            myShips: this.getNewlyCreatedElementsByLength(this.ships, info.myShipsLength),
+            otherShips: this.getNewlyCreatedElementsByIdentity(opponent.destroyedShips, info.otherShips),
+            myShots: this.getNewlyCreatedElementsByLength(this.shots, info.myShotsLength),
+            otherShots: this.getNewlyCreatedElementsByLength(opponent.shots, info.otherShotsLength),
             winner: game.getWinner(),
         };
 
-        this.socket.emit(Player.SERVER_EVENT.GAME_STATE, snapshot);
+        console.log(snapshot);
+
+        this.lastClientSnapshotInfo = {
+            myName: this.name,
+            otherName: opponent.name,
+            myShipsLength: this.ships.length,
+            otherShips: opponent.destroyedShips,
+            myShotsLength: this.shots.length,
+            otherShotsLength: opponent.shots.length,
+        };
+
+        return snapshot;
+    }
+
+    getNewlyCreatedElementsByLength(allElements, lastKnownLength) {
+        lastKnownLength = lastKnownLength || 0;
+        if(allElements.length === lastKnownLength) {
+            return undefined;
+        } else {
+            return allElements.slice(lastKnownLength);
+        }
+    }
+    getNewlyCreatedElementsByIdentity(allElements, lastKnowElements) {
+        lastKnowElements = lastKnowElements || [];
+        //iterate over every element and only collect it if it is *not* in lastKnowElements
+        return allElements.filter((element1) => {
+            return !lastKnowElements.some((element2) => {
+                return element1 === element2;
+            });
+        });
     }
 
     onDisconnect() {

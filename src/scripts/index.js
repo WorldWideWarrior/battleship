@@ -122,19 +122,19 @@ function restart() {
 
 function parseShips(snapshot) {
     if (snapshot.myShips) {
-        ownBattlefield.ships = snapshot.myShips;
+        ownBattlefield.ships = ownBattlefield.ships.concat(snapshot.myShips);
     }
     if (snapshot.otherShips) {
-        opponentBattlefield.ships = snapshot.otherShips;
+        opponentBattlefield.ships = opponentBattlefield.ships.concat(snapshot.otherShips);
     }
 }
 
 function parseShots(snapshot) {
     if (snapshot.myShots) {
-        ownBattlefield.shots = snapshot.myShots;
+        ownBattlefield.shots = ownBattlefield.shots.concat(snapshot.myShots);
     }
     if (snapshot.otherShots) {
-        opponentBattlefield.shots = snapshot.otherShots;
+        opponentBattlefield.shots = opponentBattlefield.shots.concat(snapshot.otherShots);
     }
 }
 
@@ -160,6 +160,12 @@ function parseNames(snapshot) {
 
 function onGameState(snapshot) {
     actualState = snapshot.state;
+    if(snapshot.firstSnapshot) {
+        ownBattlefield.ships = [];
+        ownBattlefield.shots = [];
+        opponentBattlefield.ships = [];
+        opponentBattlefield.shots = [];
+    }
     if (snapshot.state === 'waiting-for-other-player') {
         ownBattlefield.reset();
         opponentBattlefield.reset();
