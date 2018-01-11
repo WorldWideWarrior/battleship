@@ -20,6 +20,8 @@ export class Sound {
         this.sound.src = filename;
         if(preload) {
             this.preload()
+        } else {
+            this.sound.setAttribute("preload", "none");
         }
         this.sound.setAttribute("controls", "none");
         this.sound.style.display = "none";
