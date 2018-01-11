@@ -85,6 +85,9 @@ $transition-time: 400ms;
 		&.ship-middle-down,
 		&.ship-end-down {
 			background-color: #000;
+			&.hit {
+				animation: 400ms ship-destroyed 1200ms;
+			}
 		}
 		&.ship-start-right {
 			padding-right: $size + $borderSize/2;
@@ -118,7 +121,8 @@ $transition-time: 400ms;
 			background-color: $hit-background !important;
 		}
 		&.miss {
-			background-color: $miss-background !important;
+			background-color: $see-background-color !important;
+			animation: 600ms miss ;
 		}
 	}
 }
@@ -129,7 +133,7 @@ $transition-time: 400ms;
 
 	transition: opacity $transition-time;
 
-	background-color: $see-background;
+	//background-color: $see-background;
 
 	@media screen and (orientation:portrait) {
 		float: none;
@@ -151,11 +155,16 @@ $transition-time: 400ms;
 		@for $x from 0 through 9 {
 			@for $y from 0 through 9 {
 				tr:nth-child(#{$x + 1}) {
-					td.sea:nth-child(#{$y + 1}) {
-						$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
-						animation: 3000ms turn-activate $animation-delay linear;
-						animation-iteration-count: infinite;
+					td {
+						&.sea {
+							&:nth-child(#{$y + 1}) {
+								$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
+								animation: 3000ms turn-activate $animation-delay linear;
+								animation-iteration-count: infinite;
+							}
+						}
 					}
+
 				}
 			}
 		}
@@ -174,14 +183,48 @@ $transition-time: 400ms;
 	}
 }
 
-@keyframes turn-activate {
-	0%, 20%, 100% {
-		background-color: transparent;
-		transform: translate(0px, 0px);
+
+@media screen and (orientation:portrait) {
+	@keyframes turn-activate {
+		0%, 70%, 100% {
+			//transform: translate(0rem, 0rem);
+		}
+		10% {
+			background-color: $see-background-color;
+			//transform: translate(0.20rem, 0.20rem);
+		}
 	}
-	10% {
-		background-color: $see-background-color;
-		transform: translate(0.2rem, 0.2rem);
+}
+
+@media screen and (orientation:landscape) {
+	@keyframes turn-activate {
+		0%, 70%, 100% {
+			//transform: translate(0rem, 0rem);
+		}
+		10% {
+			background-color: $see-background-color;
+			//transform: translate(0.3rem, 0.3rem);
+		}
+	}
+}
+
+
+@keyframes ship-destroyed {
+	0%, 100% {
+		transform: scale(1, 1);
+	}
+	50% {
+		transform: scale(1.2, 1.2);
+	}
+}
+
+@keyframes miss {
+	0%, 100% {
+		transform: scale(1, 1);
+	}
+	50% {
+		transform: scale(0.9, 0.9);
+		background-color: $miss-background;
 	}
 }
 
