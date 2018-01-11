@@ -183,6 +183,7 @@ class Player extends EventEmitter {
 
     reconnect(socket) {
         this.isConnected = true;
+        this.lastClientSnapshotInfo = undefined;
         this.removeListenerFromSocket(this.socket);
         this.socket = socket;
         this.addListenerToSocket(socket);
