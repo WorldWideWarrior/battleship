@@ -140,11 +140,11 @@ export class Battlefield {
             const $element = this.$field[difference.x][difference.y];
             const oldState = difference.from;
             const newState = difference.to;
-            const removeMask = (~oldState) ^ newState;
-            const addMask = oldState ^ newState;
+            const removeMask = oldState & ~newState;
+            const addMask = ~oldState & newState;
 
-            $element.removeClass(getFieldClasses(oldState));
-            $element.addClass(getFieldClasses(newState));
+            $element.removeClass(getFieldClasses(removeMask));
+            $element.addClass(getFieldClasses(addMask));
         });
         this.field = newField;
     }
