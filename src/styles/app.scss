@@ -81,7 +81,7 @@ $transition-time: 400ms;
 		&.sea:hover {
 			background-color: $see-background-color;
 		}
-		transition: background-color $transition-time, border $transition-time 600ms;
+		transition: background-color $transition-time, border-width $transition-time 600ms;
 		&.ship-start-right,
 		&.ship-middle-right,
 		&.ship-end-right,
@@ -90,7 +90,7 @@ $transition-time: 400ms;
 		&.ship-end-down {
 			background-color: #000;
 			&.hit {
-				animation: 400ms ship-destroyed 1200ms;
+				animation: 400ms hit, 400ms ship-destroyed 1200ms;
 			}
 		}
 
@@ -115,11 +115,12 @@ $transition-time: 400ms;
 			border-top-width: 0;
 		}
 		&.hit {
-			background-color: $hit-background !important;
+			background-color: $hit-background;
+			animation: 600ms hit;
 		}
 		&.miss {
-			background-color: $see-background-color !important;
-			animation: 600ms miss ;
+			background-color: #2085e4;
+			animation: 600ms miss;
 		}
 	}
 }
@@ -134,6 +135,7 @@ $transition-time: 400ms;
 	@media screen and (orientation:landscape) {
 		flex-direction: row;
 	}
+	margin-bottom: $margin-border;
 }
 
 .field {
@@ -221,7 +223,7 @@ $transition-time: 400ms;
 
 		}
 		50% {
-			border-width: 0.8vw;
+			transform: scale(1.1);
 		}
 	}
 }
@@ -231,19 +233,53 @@ $transition-time: 400ms;
 
 		}
 		50% {
-			border-width: 0.8vh;
+			transform: scale(1.1);
 		}
 	}
 }
 
-@keyframes miss {
-	0%, 100% {
+@media screen and (orientation:portrait) {
+	@keyframes miss {
+		0%, 100% {
 
+		}
+		50% {
+			border-width: 0.8vw;
+			background-color: $miss-background;
+		}
 	}
-	50% {
-		border-width: 1vh;
-		background-color: $miss-background;
+}
+@media screen and (orientation:landscape) {
+	@keyframes miss {
+		0%, 100% {
+
+		}
+		50% {
+			border-width: 0.8vw;
+			background-color: $miss-background;
+		}
 	}
 }
 
+
+@media screen and (orientation:portrait) {
+	@keyframes hit {
+		0%, 100% {
+
+		}
+		50% {
+			border-width: 0.3vw;
+		}
+	}
+}
+@media screen and (orientation:landscape) {
+	@keyframes hit {
+		0%, 100% {
+
+		}
+		50% {
+			border-width: 0.3vh;
+		}
+	}
+}
 
