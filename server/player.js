@@ -82,8 +82,6 @@ class Player extends EventEmitter {
             winner: game.getWinner(),
         };
 
-        console.log(snapshot);
-
         this.lastClientSnapshotInfo = {
             myName: this.name,
             otherName: opponent.name,
