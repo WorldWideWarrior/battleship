@@ -147,20 +147,21 @@ $transition-time: 400ms;
 	}
 
 
-    &.activated-field {
-      @for $x from 0 through 9 {
-        @for $y from 0 through 9 {
-          tr:nth-child(#{$x + 1}) {
-            td.sea:nth-child(#{$y + 1}) {
-              animation: 400ms turn-activate;
-              animation-delay: sqrt($x*$x+$y*$y) * 100ms;
-            }
-          }
-        }
-      }
-    }
+	&.activated-field {
+		@for $x from 0 through 9 {
+			@for $y from 0 through 9 {
+				tr:nth-child(#{$x + 1}) {
+					td.sea:nth-child(#{$y + 1}) {
+						$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
+						animation: 3000ms turn-activate $animation-delay linear;
+						animation-iteration-count: infinite;
+					}
+				}
+			}
+		}
+	}
 
-	&.deactivated-field {
+	&#field-opponent.deactivated-field {
 		opacity: 0.4;
 		transition: opacity $transition-time $transition-time;
 
@@ -174,14 +175,13 @@ $transition-time: 400ms;
 }
 
 @keyframes turn-activate {
-	0% {
+	0%, 20%, 100% {
 		background-color: transparent;
+		transform: translate(0px, 0px);
 	}
-	50% {
+	10% {
 		background-color: $see-background-color;
-	}
-	100% {
-		background-color: transparent;
+		transform: translate(0.2rem, 0.2rem);
 	}
 }
 

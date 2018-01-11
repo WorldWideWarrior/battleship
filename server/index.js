@@ -8,10 +8,6 @@ const Lobby = require('./lobby.js');
 
 app.use(serveStatic('../static'));
 
-app.get('/', (req, res) => {
-    res.sendFile(`${__dirname}/index.html`);
-});
-
 http.listen(3000, () => {
     console.log('listening on *:3000');
     new Lobby(io);

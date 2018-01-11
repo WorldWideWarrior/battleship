@@ -34,6 +34,7 @@ class Lobby {
                 // check if the waiting player just reconnected
                 if(this.waitingPlayer && this.waitingPlayer.id === clientId) {
                     this.waitingPlayer.reconnect(socket);
+                    socket.emit(Game.SERVER_EVENT.GAME_STATE, { state: Game.CLIENT_STATE.WAITING_FOR_OTHER_PLAYER });
                 } else {
                     const player = new Player(socket, clientId);
                     this.newPlayerCreated(socket, player);
