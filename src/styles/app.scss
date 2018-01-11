@@ -39,10 +39,13 @@ body {
 	font-family: $customFont;
 }
 
-$margin-border: 20px;
+$margin-border: 8px;
 
 #players {
 	padding: $margin-border;
+	@media screen and (orientation:portrait) {
+		border-bottom: 0;
+	}
 
 	#player1Name {
 		float: left;
@@ -66,9 +69,10 @@ $hit-background: #0F0;
 $miss-background: #F00;
 $transition-time: 400ms;
 
-@mixin row($size, $borderSize) {
-	td {
-		padding: $size;
+@mixin box($size, $borderSize) {
+	.box {
+		width: $size;
+		height: $size;
 
 		border: white $borderSize solid;
 
@@ -77,7 +81,7 @@ $transition-time: 400ms;
 		&.sea:hover {
 			background-color: $see-background-color;
 		}
-		transition: background-color $transition-time, padding $transition-time 600ms, border $transition-time 600ms;
+		transition: background-color $transition-time, border $transition-time 600ms;
 		&.ship-start-right,
 		&.ship-middle-right,
 		&.ship-end-right,
@@ -89,32 +93,25 @@ $transition-time: 400ms;
 				animation: 400ms ship-destroyed 1200ms;
 			}
 		}
+
 		&.ship-start-right {
-			padding-right: $size + $borderSize/2;
 			border-right-width: 0;
 		}
 		&.ship-middle-right {
-			padding-right: $size + $borderSize/2;
-			padding-left: $size + $borderSize/2;
 			border-right-width: 0;
 			border-left-width: 0;
 		}
 		&.ship-end-right {
-			padding-left: $size + $borderSize/2;
 			border-left-width: 0;
 		}
 		&.ship-start-down {
-			padding-bottom: $size + $borderSize/2;
 			border-bottom-width: 0;
 		}
 		&.ship-middle-down {
-			padding-top: $size + $borderSize/2;
-			padding-bottom: $size + $borderSize/2;
 			border-top-width: 0;
 			border-bottom-width: 0;
 		}
 		&.ship-end-down{
-			padding-top: $size + $borderSize/2;
 			border-top-width: 0;
 		}
 		&.hit {
@@ -127,35 +124,46 @@ $transition-time: 400ms;
 	}
 }
 
+.fields {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	@media screen and (orientation:portrait) {
+		flex-direction: column;
+	}
+	@media screen and (orientation:landscape) {
+		flex-direction: row;
+	}
+}
+
 .field {
-	float: left;
+	display: flex;
+	flex-direction: column;
 	margin: $margin-border;
 
 	transition: opacity $transition-time;
 
-	//background-color: $see-background;
+	background-color: transparent;
 
 	@media screen and (orientation:portrait) {
-		float: none;
-		margin-left: auto;
-		margin-right: auto;
-		@include row(3.4vw, 1.5vw);
+		@include box(4.1vh, 0.5vh);
 	}
 
 	@media screen and (orientation:landscape) {
-		&#field-opponent {
-			float: right;
-		}
+		@include box(4.1vw, 0.5vw);
+	}
 
-		@include row(1.6vw, 0.75vw);
+	.line {
+		display: flex;
+		margin: 0;
 	}
 
 
 	&.activated-field {
 		@for $x from 0 through 9 {
 			@for $y from 0 through 9 {
-				tr:nth-child(#{$x + 1}) {
-					td {
+				.line:nth-child(#{$x + 1}) {
+					.box {
 						&.sea {
 							&:nth-child(#{$y + 1}) {
 								$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
@@ -174,7 +182,7 @@ $transition-time: 400ms;
 		opacity: 0.4;
 		transition: opacity $transition-time $transition-time;
 
-		td{
+		.box{
 			&.sea:hover {
 				background-color: $see-background;
 			}
@@ -207,23 +215,33 @@ $transition-time: 400ms;
 		}
 	}
 }
+@media screen and (orientation:portrait) {
+	@keyframes ship-destroyed {
+		0%, 100% {
 
-
-@keyframes ship-destroyed {
-	0%, 100% {
-		transform: scale(1, 1);
+		}
+		50% {
+			border-width: 0.8vw;
+		}
 	}
-	50% {
-		transform: scale(1.2, 1.2);
+}
+@media screen and (orientation:landscape) {
+	@keyframes ship-destroyed {
+		0%, 100% {
+
+		}
+		50% {
+			border-width: 0.8vh;
+		}
 	}
 }
 
 @keyframes miss {
 	0%, 100% {
-		transform: scale(1, 1);
+
 	}
 	50% {
-		transform: scale(0.9, 0.9);
+		border-width: 1vh;
 		background-color: $miss-background;
 	}
 }

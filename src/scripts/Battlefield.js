@@ -55,9 +55,9 @@ export class Battlefield {
         }
 
         for (let row = 0; row < this.height; row++) {
-            const rowElement = $('<tr></tr>');
+            const rowElement = $('<div class="line"/>');
             for (let column = 0; column < this.width; column++) {
-                const columnElement = $('<td/>');
+                const columnElement = $('<div class="box"/>');
                 columnElement.addClass(Battlefield.FIELD_CLASS[Battlefield.FIELD.SEA]);
                 ((clickRow, clickColumn) => {
                     columnElement.on('click', () => {
