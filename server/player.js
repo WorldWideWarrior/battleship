@@ -75,7 +75,8 @@ class Player extends EventEmitter {
             state: clientState,
             myName: this.name === info.myName ? undefined : this.name,
             otherName: opponent.name === info.otherName ? undefined : opponent.name,
-            myShips: this.getNewlyCreatedElementsByLength(this.ships, info.myShipsLength),
+            //TODO: needs a better diffing strategy, the hits count of a ship can change and the client needs to know that
+            myShips: this.ships,
             otherShips: this.getNewlyCreatedElementsByIdentity(opponent.destroyedShips, info.otherShips),
             myShots: this.getNewlyCreatedElementsByLength(this.shots, info.myShotsLength),
             otherShots: this.getNewlyCreatedElementsByLength(opponent.shots, info.otherShotsLength),
@@ -85,7 +86,7 @@ class Player extends EventEmitter {
         this.lastClientSnapshotInfo = {
             myName: this.name,
             otherName: opponent.name,
-            myShipsLength: this.ships.length,
+            //myShipsLength: this.ships.length,
             otherShips: opponent.destroyedShips,
             myShotsLength: this.shots.length,
             otherShotsLength: opponent.shots.length,
