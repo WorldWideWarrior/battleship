@@ -70,58 +70,10 @@ $miss-background: #F00;
 $transition-time: 400ms;
 
 @mixin box($size, $borderSize) {
-	.box {
+	.box-container {
 		width: $size;
 		height: $size;
-
-		border: white $borderSize solid;
-
-		background-color: $see-background;
-		touch-action: manipulation;
-		&.sea:hover {
-			background-color: $see-background-color;
-		}
-		transition: background-color $transition-time, border-width $transition-time 600ms;
-		&.ship-start-right,
-		&.ship-middle-right,
-		&.ship-end-right,
-		&.ship-start-down,
-		&.ship-middle-down,
-		&.ship-end-down {
-			background-color: #000;
-			&.hit {
-				animation: 400ms hit, 400ms ship-destroyed 1200ms;
-			}
-		}
-
-		&.ship-start-right {
-			border-right-width: 0;
-		}
-		&.ship-middle-right {
-			border-right-width: 0;
-			border-left-width: 0;
-		}
-		&.ship-end-right {
-			border-left-width: 0;
-		}
-		&.ship-start-down {
-			border-bottom-width: 0;
-		}
-		&.ship-middle-down {
-			border-top-width: 0;
-			border-bottom-width: 0;
-		}
-		&.ship-end-down{
-			border-top-width: 0;
-		}
-		&.hit {
-			background-color: $hit-background;
-			animation: 600ms hit;
-		}
-		&.miss {
-			background-color: #2085e4;
-			animation: 600ms miss;
-		}
+		padding: $borderSize;
 	}
 }
 
@@ -147,6 +99,11 @@ $transition-time: 400ms;
 
 	background-color: transparent;
 
+	.line {
+		display: flex;
+		margin: 0;
+	}
+
 	@media screen and (orientation:portrait) {
 		@include box(4.1vh, 0.5vh);
 	}
@@ -155,30 +112,85 @@ $transition-time: 400ms;
 		@include box(4.1vw, 0.5vw);
 	}
 
-	.line {
-		display: flex;
-		margin: 0;
-	}
+	.box-container {
+		transition: $transition-time padding  600ms;
+		touch-action: manipulation;
+		.box {
+			background-color: $see-background;
+			width: 100%;
+			height: 100%;
 
+			transition: background-color $transition-time;
 
-	&.activated-field {
-		@for $x from 0 through 9 {
-			@for $y from 0 through 9 {
-				.line:nth-child(#{$x + 1}) {
-					.box {
-						&.sea {
-							&:nth-child(#{$y + 1}) {
-								$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
-								animation: 3000ms turn-activate $animation-delay linear;
-								animation-iteration-count: infinite;
-							}
-						}
-					}
+		}
+		&.sea:hover .box {
+			background-color: $see-background-color;
+		}
+		&.ship-start-right,
+		&.ship-middle-right,
+		&.ship-end-right,
+		&.ship-start-down,
+		&.ship-middle-down,
+		&.ship-end-down {
+			.box {
+				background-color: #000;
+			}
 
-				}
+			&.destroyed {
+				animation: 400ms hit, 400ms ship-destroyed 1200ms;
+			}
+		}
+		&.ship-start-right {
+			padding-right: 0;
+		}
+		&.ship-middle-right {
+			padding-right: 0;
+			padding-left: 0;
+		}
+		&.ship-end-right {
+			padding-left: 0;
+		}
+		&.ship-start-down {
+			padding-bottom: 0;
+		}
+		&.ship-middle-down {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+		&.ship-end-down{
+			padding-top: 0;
+		}
+		&.hit {
+			animation: 600ms hit;
+			.box {
+				background-color: $hit-background;
+			}
+		}
+		&.miss {
+			animation: 600ms miss;
+			.box{
+				background-color: $miss-background;
 			}
 		}
 	}
+
+
+
+	@for $x from 0 through 9 {
+		@for $y from 0 through 9 {
+			.line:nth-child(#{$x + 1}) {
+				.sea.box-container:nth-child(#{$y + 1}) {
+					$animation-delay: sqrt($x*$x+$y*$y) * 100ms;
+					.box {
+						animation: 3000ms turn-activate $animation-delay linear, 3000ms wave $animation-delay linear;
+						animation-iteration-count: infinite;
+					}
+				}
+
+			}
+		}
+	}
+
 
 	&#field-opponent.deactivated-field {
 		opacity: 0.4;
@@ -197,11 +209,19 @@ $transition-time: 400ms;
 @media screen and (orientation:portrait) {
 	@keyframes turn-activate {
 		0%, 70%, 100% {
-			//transform: translate(0rem, 0rem);
+			transform: translate(0rem, 0rem);
 		}
 		10% {
 			background-color: $see-background-color;
-			//transform: translate(0.20rem, 0.20rem);
+			transform: translate(0.20rem, 0.20rem);
+		}
+	}
+	@keyframes wave {
+		0%, 70%, 100% {
+			transform: translate(0rem, 0rem);
+		}
+		10% {
+			transform: translate(0.20rem, 0.20rem);
 		}
 	}
 }
@@ -209,77 +229,59 @@ $transition-time: 400ms;
 @media screen and (orientation:landscape) {
 	@keyframes turn-activate {
 		0%, 70%, 100% {
-			//transform: translate(0rem, 0rem);
+			transform: translate(0rem, 0rem);
 		}
 		10% {
 			background-color: $see-background-color;
-			//transform: translate(0.3rem, 0.3rem);
+			transform: translate(0.3rem, 0.3rem);
 		}
 	}
-}
-@media screen and (orientation:portrait) {
-	@keyframes ship-destroyed {
-		0%, 100% {
-
+	@keyframes wave {
+		0%, 70%, 100% {
+			transform: translate(0rem, 0rem);
 		}
-		50% {
-			transform: scale(1.1);
-		}
-	}
-}
-@media screen and (orientation:landscape) {
-	@keyframes ship-destroyed {
-		0%, 100% {
-
-		}
-		50% {
-			transform: scale(1.1);
+		10% {
+			transform: translate(0.30rem, 0.30rem);
 		}
 	}
 }
 
-@media screen and (orientation:portrait) {
-	@keyframes miss {
-		0%, 100% {
+@keyframes ship-destroyed {
+	0%, 100% {
 
-		}
-		50% {
-			border-width: 0.8vw;
-			background-color: $miss-background;
-		}
+	}
+	50% {
+		transform: scale(1.1);
 	}
 }
-@media screen and (orientation:landscape) {
-	@keyframes miss {
-		0%, 100% {
 
-		}
-		50% {
-			border-width: 0.8vw;
-			background-color: $miss-background;
-		}
+@keyframes ship-destroyed {
+	0%, 100% {
+
+	}
+	50% {
+		transform: scale(1.1);
 	}
 }
 
 
-@media screen and (orientation:portrait) {
-	@keyframes hit {
-		0%, 100% {
+@keyframes miss {
+	0%, 100% {
 
-		}
-		50% {
-			border-width: 0.3vw;
-		}
+	}
+	50% {
+		transform: scale(0.8);
 	}
 }
-@media screen and (orientation:landscape) {
-	@keyframes hit {
-		0%, 100% {
 
-		}
-		50% {
-			border-width: 0.3vh;
-		}
+
+@keyframes hit {
+	0%, 100% {
+
+	}
+	50% {
+		transform: scale(1.1);
 	}
 }
+
 

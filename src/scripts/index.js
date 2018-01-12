@@ -122,7 +122,9 @@ function restart() {
 
 function parseShips(snapshot) {
     if (snapshot.myShips) {
-        ownBattlefield.ships = ownBattlefield.ships.concat(snapshot.myShips);
+        //TODO: needs a better diffing strategy
+        //ownBattlefield.ships = ownBattlefield.ships.concat(snapshot.myShips);
+        ownBattlefield.ships = snapshot.myShips;
     }
     if (snapshot.otherShips) {
         opponentBattlefield.ships = opponentBattlefield.ships.concat(snapshot.otherShips);

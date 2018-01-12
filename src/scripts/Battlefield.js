@@ -57,7 +57,7 @@ export class Battlefield {
         for (let row = 0; row < this.height; row++) {
             const rowElement = $('<div class="line"/>');
             for (let column = 0; column < this.width; column++) {
-                const columnElement = $('<div class="box"/>');
+                const columnElement = $('<div class="box-container"> <div class="box"/> </div>');
                 columnElement.addClass(Battlefield.FIELD_CLASS[Battlefield.FIELD.SEA]);
                 ((clickRow, clickColumn) => {
                     columnElement.on('click', () => {
@@ -105,12 +105,20 @@ export class Battlefield {
                     console.error(`unknown orientation ${ship.orientation} for ship ${ship.name}`);
                     break;
                 }
+                //set ship flag (this removes every other flag (in this cause, only the sea flag should previously be set)
                 field[x][y] = getFieldForShipAtOffset(ship, offset);
+                //ships destroyed
+                if(ship.size === ship.hits) {
+                    //add destroyed flag
+                    field[x][y] |= Battlefield.FIELD.DESTROYED;
+                }
             }
         });
 
         shots.forEach((shot) => {
-            field[shot.position.x][shot.position.y] &= ~Battlefield.FIELD.SEA; //remove sea flag
+            //remove sea flag
+            field[shot.position.x][shot.position.y] &= ~Battlefield.FIELD.SEA;
+            // add hit or miss Flag
             field[shot.position.x][shot.position.y] |= shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
         });
         return field;
@@ -140,8 +148,10 @@ export class Battlefield {
             const $element = this.$field[difference.x][difference.y];
             const oldState = difference.from;
             const newState = difference.to;
+            //removes flags from oldState which are set in newState
             const removeMask = oldState & ~newState;
-            const addMask = ~oldState & newState;
+            //removes flags from newState which are already in oldState
+            const addMask = newState & ~oldState;
 
             $element.removeClass(getFieldClasses(removeMask));
             $element.addClass(getFieldClasses(addMask));
@@ -161,6 +171,20 @@ Battlefield.FIELD = {
     HIT: 1 << 6,
     MISS: 1 << 7,
     SEA: 1 << 8,
+    DESTROYED: 1 << 9,
+};
+
+Battlefield.FIELD_CLASS = {
+    1: "ship-start-right",
+    2: "ship-middle-right",
+    4: "ship-end-right",
+    8: "ship-start-down",
+    16: "ship-middle-down",
+    32: "ship-end-down",
+    64: "hit",
+    128: "miss",
+    256: "sea",
+    512: "destroyed",
 };
 
 function getFieldForShipAtOffset(ship, offset) {
@@ -181,18 +205,8 @@ function getFieldClasses(field) {
 }
 
 const DEACTIVATED_CLASS = "deactivated-field";
-const ACTIVATED_CLASS = "activated-field"
+const ACTIVATED_CLASS = "activated-field";
 
-Battlefield.FIELD_CLASS = {
-    1: "ship-start-right",
-    2: "ship-middle-right",
-    4: "ship-end-right",
-    8: "ship-start-down",
-    16: "ship-middle-down",
-    32: "ship-end-down",
-    64: "hit",
-    128: "miss",
-    256: "sea",
-};
+
 
 
