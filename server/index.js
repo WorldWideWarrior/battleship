@@ -17,8 +17,13 @@ app.get('/api/highscore', (req, res) => {
 
     initHighscore();
 
-    res.status(200);
-    res.send(highscoreObject.getHighscores());
+    if(highscoreObject && highscoreObject.getHighscores()) {
+        res.status(200);
+        res.send(highscoreObject.getHighscores());
+    } else {
+        res.status(500);
+        res.send(null);
+    }
 });
 
 app.post('/api/highscore', (req, res) => {
