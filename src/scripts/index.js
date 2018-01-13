@@ -45,9 +45,15 @@ function showHighscoresModal() {
     });
 
     let highscore = new Highscore('http://' + location.hostname + ':3000/api/highscore');
-    return highscore.getHighscores(function (highscore) {
+    return highscore.getHighscores(function (error, highscore) {
         let table = $('#highscores');
         table.html('');
+
+        if(error) {
+            $('#errorHighscore').html(error);
+            return;
+        }
+
         table.append($('<tr><th>Name</th><th>Shots</th></tr>'));
         for(let i = 0; i < highscore.length; i++) {
             table.append($('<tr><td>' + highscore[i].name + '</td><td>' + highscore[i].points + '</td></tr>'))

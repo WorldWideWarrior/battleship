@@ -12,7 +12,9 @@ export class Highscore {
                     return b.points - a.points;
                 });
 
-                callback(jsonHighscore);
+                callback(null, jsonHighscore);
+            } else if(xmlHttp.status === 500) {
+                callback('Internal server error', null);
             }
 
         };
