@@ -61,7 +61,7 @@ $margin-border: 8px;
 	}
 }
 
-#buttons {
+.buttons {
 	float: none;
 	width: 100%;
 	height: 70px;
@@ -84,6 +84,14 @@ $see-background-color: #44c2f5;
 $hit-background: #0F0;
 $miss-background: #F00;
 $transition-time: 400ms;
+
+.no-water-animations {
+
+	.box {
+		transition: none !important;
+		animation: none !important;
+	}
+}
 
 @mixin box($size, $borderSize) {
 	.box-container {

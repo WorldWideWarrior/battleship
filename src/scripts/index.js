@@ -39,6 +39,14 @@ const destroyPlayer = new RingBufferPlayer([
     new Sound("static/sound/destroy10.mp3", false),
 ]);
 
+function disableWaterAnimation() {
+    $('body').addClass('no-water-animations');
+}
+
+function activateWaterAnimation() {
+    $('body').removeClass('no-water-animations');
+}
+
 function showHighscoresModal() {
     $('#highscores-modal').modal({
         backdrop: 'static',
@@ -306,6 +314,15 @@ $('#buttonRestart').click(() => {
 
 $('#buttonCloseHighscore').click(() =>  {
     closeHighscores();
+});
+
+//animations
+$('#buttonEnableAnimations').click(() => {
+    activateWaterAnimation();
+});
+
+$('#buttonDisableAnimations').click(() => {
+    disableWaterAnimation();
 });
 
 //############# CHEATS #################
