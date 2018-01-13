@@ -4,9 +4,10 @@ const Player = require('./player.js');
 const Game = require('./game.js');
 
 class Lobby {
-    constructor(io) {
+    constructor(fs, io) {
         this.games = [];
         this.io = io;
+        this.fs = fs;
         this.waitingPlayer = undefined;
 
         this.binedOnGameClosed = this.onGameClosed.bind(this);
@@ -71,7 +72,7 @@ class Lobby {
     }
 
     createGame(player1, player2) {
-        const game = new Game(player1, player2);
+        const game = new Game(this.fs, player1, player2);
         game.on(Game.EVENT.GAME_CLOSED, this.binedOnGameClosed);
         return game;
     }
