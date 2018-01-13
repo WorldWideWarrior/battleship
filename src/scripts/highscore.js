@@ -14,12 +14,15 @@ export class Highscore {
 
                 callback(null, jsonHighscore);
             } else if(xmlHttp.status === 500) {
-                callback('Internal server error', null);
+                callback('500: Internal server error', null);
+            } else if(xmlHttp.status === 404) {
+                callback('404: Server not found', null);
             }
 
         };
+
         xmlHttp.open("GET", this.url, true); // true for asynchronous
-        xmlHttp.send(null);
+        xmlHttp.send();
     }
 
     setHighscore(name, points) {
