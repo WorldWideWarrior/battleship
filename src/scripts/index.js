@@ -3,6 +3,7 @@ import { OwnBattlefield } from './OwnBattlefield';
 import { OpponentBattlefield } from './OpponentBattlefield';
 import { Sound } from './Sound';
 import { RingBufferPlayer } from './RingBufferPlayer';
+import {Highscore} from "./highscore";
 
 let clientId = localStorage.getItem("clientId");
 let socket;
@@ -38,6 +39,22 @@ const destroyPlayer = new RingBufferPlayer([
     new Sound("static/sound/destroy10.mp3", false),
 ]);
 
+function showHighscoresModal() {
+    $('#highscores-modal').modal({
+        backdrop: 'static',
+    });
+
+    let highscore = new Highscore('http://' + location.hostname + ':3000/api/highscore');
+    return highscore.getHighscores(function (highscore) {
+        let table = $('#highscores');
+        table.html('');
+        table.append($('<tr><th>Name</th><th>Shots</th></tr>'));
+        for(let i = 0; i < highscore.length; i++) {
+            table.append($('<tr><td>' + highscore[i].name + '</td><td>' + highscore[i].points + '</td></tr>'))
+        }
+    });
+}
+
 function showPlayerInput() {
     $('#player-modal').modal({
         backdrop: 'static',
@@ -66,6 +83,10 @@ function showWaitingModal() {
         backdrop: 'static',
         keyboard: false,
     })
+}
+
+function closeHighscores() {
+    $('#highscores-modal').modal('hide');
 }
 
 function closeGameOverModal() {
@@ -264,9 +285,17 @@ $('#buttonReadyPlayerModal').click(() => {
     }
 });
 
+$('#buttonShowHighscore').click(() => {
+    showHighscoresModal();
+});
+
 //restart after gameOver
 $('#buttonRestart').click(() => {
     restart();
+});
+
+$('#buttonCloseHighscore').click(() =>  {
+    closeHighscores();
 });
 
 //############# CHEATS #################

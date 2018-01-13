@@ -43,6 +43,9 @@ $margin-border: 8px;
 
 #players {
 	padding: $margin-border;
+	float: none;
+	width: 100%;
+	height: 70px;
 	@media screen and (orientation:portrait) {
 		border-bottom: 0;
 	}
@@ -56,10 +59,23 @@ $margin-border: 8px;
 		float: right;
 		width: auto;
 	}
+}
+
+#buttons {
+	float: none;
+	width: 100%;
+	height: 70px;
 
 	button {
-		float: none;
-		width: 100%;
+		width: 49%;
+	}
+
+	.btn-left {
+		float:left;
+	}
+
+	.btn-right {
+		float: right;
 	}
 }
 
