@@ -39,7 +39,5 @@ http.listen(3000, () => {
 });
 
 function initHighscore() {
-    if(!highscoreObject) {
-        highscoreObject = new Highscore(fs);
-    }
+    highscoreObject = new Highscore(fs);
 }
