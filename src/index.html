@@ -10,7 +10,10 @@
         <div id="players">
             <h5 id="player1Name">Player 1: </h5>
             <h5 id="player2Name">Player 2: </h5>
-            <button class="btn btn" type="button" data-toggle="modal" data-target="#player-modal" >Change Name</button>
+        </div>
+        <div id="buttons">
+            <button class="btn btn-left" type="button" data-toggle="modal" data-target="#player-modal" >Change Name</button>
+            <button id="buttonShowHighscore" class="btn btn-right" type="button">Highscores</button>
         </div>
         <div class="fields">
             <div id="field-own" class="field">
@@ -63,6 +66,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="buttonRestart">New Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="highscores-modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Highscores</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="highscores">
+                        <tr>
+                            <th>Name</th>
+                            <th>Shots</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="buttonCloseHighscore">Close</button>
                 </div>
             </div>
         </div>
