@@ -289,6 +289,10 @@ $('#buttonShowHighscore').click(() => {
     showHighscoresModal();
 });
 
+$('#buttonShowHighscoreGameOver').click(() => {
+    showHighscoresModal();
+});
+
 //restart after gameOver
 $('#buttonRestart').click(() => {
     restart();
