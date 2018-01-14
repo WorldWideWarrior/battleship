@@ -111,6 +111,7 @@ function closeWaitingModal() {
 function setOwnName(name) {
     ownName = name;
     localStorage.setItem('name', name);
+    $('#playerNameInput').val(name);
     $('#player1Name').text(`You: ${name}`);
 }
 
