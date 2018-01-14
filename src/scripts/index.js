@@ -207,7 +207,6 @@ function onGameState(snapshot) {
         opponentBattlefield.reset();
         showWaitingModal();
     } else if (snapshot.state === 'setup') {
-        closeWaitingModal();
         showPlayerInput();
     } else if (snapshot.state === 'attack') {
         parseShipsAndShots(snapshot);
@@ -225,7 +224,7 @@ function onGameState(snapshot) {
     }
 
     if(snapshot.state !== 'waiting-for-other-player') {
-        closeWaitingModal()
+        closeWaitingModal();
     }
     if(snapshot.state !== 'game-over') {
         closeGameOverModal();
