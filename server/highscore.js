@@ -17,28 +17,11 @@ class Highscore {
     setHighscore(name, points) {
         console.log(`Save highscore: name: ${name}, points: ${points}`);
 
-        if(this.json.highscores.length < 5) {
-            this.json.highscores.push({name: name, points: points});
-            this.save();
-        } else {
-
-            let highestScoreIndex = 0;
-            let highestScore = this.json.highscores[0];
-            for (let i = 1; i < this.json.highscores.length; i++) {
-                if (highestScore.points < this.json.highscores[i].points) {
-                    highestScore = this.json.highscores[i];
-                    highestScoreIndex = i;
-                }
-            }
-
-            if (highestScore.points >= points) {
-                //replace last entry
-                this.json.highscores[highestScoreIndex].points = points;
-                this.json.highscores[highestScoreIndex].name = name;
-
-                this.save();
-            }
-        }
+        this.json.highscores.push({name: name, points: points});
+        //sort points from low to high
+        this.json.highscores.sort((highscoreEntryA, highscoreEntryB) => highscoreEntryA.points - highscoreEntryB.points);
+        this.json.highscores = this.json.highscores.slice(0, COUNT_HIGHSCORES);
+        this.save();
     }
 
     loadHighscores() {
@@ -55,8 +38,6 @@ class Highscore {
     }
 
     save() {
-        //sort before we save it
-        this.json.highscores.sort((highscoreEntryA, highscoreEntryB) => highscoreEntryA.points - highscoreEntryB.points);
         this.fs.writeFileSync(HIGHSCORE_FILE, JSON.stringify(this.json), 'utf8');
     }
 }
