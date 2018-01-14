@@ -1,4 +1,4 @@
-class Highscore {
+export class Highscore {
     constructor(url) {
         this.url = url;
     }
@@ -38,5 +38,3 @@ class Highscore {
         xmlHttp.send({ name, points });
     }
 }
-
-module.exports = Highscore;

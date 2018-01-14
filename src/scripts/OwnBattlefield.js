@@ -1,13 +1,6 @@
+/* eslint-disable class-methods-use-this */
 import { Battlefield } from './Battlefield';
 
-class OwnBattlefield extends Battlefield {
-    constructor(table) {
-        super(table);
-    }
+export class OwnBattlefield extends Battlefield {
 
-    onClickOnField(x, y) {
-        //ignore
-    }
 }
-
-module.exports = OwnBattlefield;

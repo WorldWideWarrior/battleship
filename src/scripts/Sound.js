@@ -1,4 +1,4 @@
-class Sound {
+export class Sound {
     get volume() {
         return this.sound.volume;
     }
@@ -40,5 +40,3 @@ class Sound {
         this.sound.setAttribute('preload', 'auto');
     }
 }
-
-module.exports = Sound;

@@ -2,7 +2,7 @@
 const DEACTIVATED_CLASS = 'deactivated-field';
 const ACTIVATED_CLASS = 'activated-field';
 
-class Battlefield {
+export class Battlefield {
     static get width() {
         return 10;
     }
@@ -77,7 +77,7 @@ class Battlefield {
         return $field;
     }
 
-    static generateEmpty2Field() {
+    static generateEmptyField() {
         const field = new Array(Battlefield.width);
         for (let x = 0; x < Battlefield.width; x++) {
             field[x] = new Array(Battlefield.height);
@@ -203,5 +203,3 @@ function getFieldClasses(field) {
     return Object.keys(Battlefield.FIELD_CLASS).map(v => parseInt(v, 10)).filter(value => (field & value) === value).map(value => Battlefield.FIELD_CLASS[value])
         .join(' ');
 }
-
-module.exports = Battlefield;

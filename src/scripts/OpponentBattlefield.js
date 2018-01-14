@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { Battlefield } from './Battlefield';
 
-class OpponentBattlefield extends Battlefield {
+export class OpponentBattlefield extends Battlefield {
     constructor(table, socket) {
         super(table);
         this.socket = socket;
@@ -10,5 +11,3 @@ class OpponentBattlefield extends Battlefield {
         if (this.activated) { this.socket.emit('shot-at', x, y); }
     }
 }
-
-module.exports = OpponentBattlefield;

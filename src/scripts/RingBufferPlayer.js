@@ -1,4 +1,4 @@
-class RingBufferPlayer {
+export class RingBufferPlayer {
     constructor(sounds) {
         this.soundIndex = -1;
         /**
@@ -33,5 +33,3 @@ class RingBufferPlayer {
         nextSound.preload();
     }
 }
-
-module.exports = RingBufferPlayer;
