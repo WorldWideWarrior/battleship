@@ -199,6 +199,9 @@ function onGameState(snapshot) {
         opponentBattlefield.shots = [];
         sendOwnName();
     }
+
+    parseNames(snapshot);
+
     if (snapshot.state === 'waiting-for-other-player') {
         ownBattlefield.reset();
         opponentBattlefield.reset();
@@ -208,19 +211,16 @@ function onGameState(snapshot) {
         showPlayerInput();
     } else if (snapshot.state === 'attack') {
         parseShipsAndShots(snapshot);
-        parseNames(snapshot);
         ownBattlefield.deactivate();
         opponentBattlefield.activate();
     } else if (snapshot.state === 'defence') {
         parseShipsAndShots(snapshot);
-        parseNames(snapshot);
         ownBattlefield.activate();
         opponentBattlefield.deactivate();
     } else if (snapshot.state === 'other-player-disconnected') {
         showDisconnectModal();
     } else if (snapshot.state === 'game-over') {
         parseShipsAndShots(snapshot);
-        parseNames(snapshot);
         showGameOverModal(snapshot.winner);
     }
 
