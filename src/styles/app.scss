@@ -43,17 +43,20 @@ body {
 	width: 100%;
 }
 
-$margin-border: 8px;
+$default-margin: 8px;
 
 #players {
-	padding: $margin-border;
+	padding: $default-margin;
 	display: flex;
 	justify-content: space-between;
+	h5 {
+		margin: $default-margin;
+	}
 }
 
 .buttons {
 	display: flex;
-
+	margin: $default-margin;
 	button {
 		flex: 1;
 		margin: 0 8px;
@@ -101,13 +104,13 @@ body:not(.no-water-animations) {
 	@media screen and (orientation:landscape) {
 		flex-direction: row;
 	}
-	margin-bottom: $margin-border;
+	margin-bottom: $default-margin;
 }
 
 .field {
 	display: flex;
 	flex-direction: column;
-	margin: $margin-border;
+	margin: $default-margin;
 
 	transition: opacity $transition-time;
 
