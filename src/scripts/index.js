@@ -63,21 +63,21 @@ function showHighscoresModal() {
 }
 
 function showPlayerInput() {
-    $('#player-modal').modal({
+    $('#player-modal').modal("show", {
         backdrop: 'static',
         keyboard: false,
     });
 }
 
 function showDisconnectModal() {
-    $('#disconnect-modal').modal({
+    $('#disconnect-modal').modal("show",{
         backdrop: 'static',
         keyboard: false,
     });
 }
 
 function showGameOverModal(winner) {
-    $('#gameOver-modal').modal({
+    $('#gameOver-modal').modal("show",{
         backdrop: 'static',
         keyboard: false,
     });
@@ -86,7 +86,7 @@ function showGameOverModal(winner) {
 }
 
 function showWaitingModal() {
-    $('#waiting-modal').modal({
+    $('#waiting-modal').modal("show",{
         backdrop: 'static',
         keyboard: false,
     });
