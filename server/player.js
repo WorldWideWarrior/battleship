@@ -10,7 +10,7 @@ class Player extends EventEmitter {
         this.id = id;
         this.ships = this.generateShips();
 
-        this.lastClientSnapshotInfo;
+        //this.lastClientSnapshotInfo;
         /**
          * @type {[{position: {x: number, y: number}, hit: boolean}]}
          */
@@ -51,10 +51,6 @@ class Player extends EventEmitter {
         socket.on(Player.CLIENT_EVENT.SHOT_AT, this.bindedOnShotAt);
         socket.on(Player.CLIENT_EVENT.DISCONNECT, this.bindedOnDisconnected);
         socket.on(Player.CLIENT_EVENT.CHEAT, this.bindedOnCheat);
-    }
-
-    sendOpponentName(opponent, name) {
-        this.socket.emit(Player.SERVER_EVENT.SET_NAME, name);
     }
 
     onGameStateChange(game, fromState, toState) {
@@ -122,7 +118,7 @@ class Player extends EventEmitter {
     onNameSet(name) {
         this.name = name;
         console.log(`name set ${this.debugDescription}`);
-        this.emit(Player.EVENT.CHANGE_NAME, this, name);
+        this.emit(Player.EVENT.CHANGE_NAME);
     }
 
     onShotAt(x, y) {
