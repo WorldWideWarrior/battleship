@@ -3,6 +3,44 @@ const Ships = require('./ships.js');
 const GenerateShips = require('./generate-ships.js');
 
 class Player extends EventEmitter {
+    static generateShips() {
+        const shipsToGenerate = [
+            Ships.CARRIER, Ships.BATTLESHIP, Ships.BATTLESHIP,
+            Ships.CRUISER, Ships.CRUISER, Ships.CRUISER,
+            Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER,
+        ];
+
+        return GenerateShips.generateShips(shipsToGenerate).map((ship) => {
+            ship.hits = 0;
+            return ship;
+        });
+    }
+
+    static getNewlyCreatedElementsByLength(allElements, lastKnownLength) {
+        lastKnownLength = lastKnownLength || 0;
+        if (allElements.length === lastKnownLength) {
+            return undefined;
+        }
+        return allElements.slice(lastKnownLength);
+    }
+    static getNewlyCreatedElementsByIdentity(allElements, lastKnowElements) {
+        lastKnowElements = lastKnowElements || [];
+        // iterate over every element and only collect it if it is *not* in lastKnowElements
+        return allElements.filter(element1 => !lastKnowElements.some(element2 => element1 === element2));
+    }
+
+    get debugDescription() {
+        return `Player(name = ${this.name}, id = ${this.id})`;
+    }
+
+    get points() {
+        return this.shots.length;
+    }
+
+    get destroyedShips() {
+        return this.ships.filter(ship => ship.hits === ship.size);
+    }
+
     constructor(socket, id) {
         super();
         this.isConnected = true;
@@ -22,19 +60,6 @@ class Player extends EventEmitter {
         this.addListenerToSocket(socket);
 
         console.log(`Created user: ${id}, socket address: ${socket.handshake.address}`);
-    }
-
-    static generateShips() {
-        const shipsToGenerate = [
-            Ships.CARRIER, Ships.BATTLESHIP, Ships.BATTLESHIP,
-            Ships.CRUISER, Ships.CRUISER, Ships.CRUISER,
-            Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER,
-        ];
-
-        return GenerateShips.generateShips(shipsToGenerate).map((ship) => {
-            ship.hits = 0;
-            return ship;
-        });
     }
 
     removeListenerFromSocket(socket) {
@@ -63,7 +88,7 @@ class Player extends EventEmitter {
 
         const firstSnapshot = !this.lastClientSnapshotInfo;
         const info = this.lastClientSnapshotInfo || {};
-
+        const winner = game.getWinner();
         const snapshot = {
             firstSnapshot: firstSnapshot || undefined,
             state: clientState,
@@ -74,7 +99,7 @@ class Player extends EventEmitter {
             otherShips: Player.getNewlyCreatedElementsByIdentity(opponent.destroyedShips, info.otherShips),
             myShots: Player.getNewlyCreatedElementsByLength(this.shots, info.myShotsLength),
             otherShots: Player.getNewlyCreatedElementsByLength(opponent.shots, info.otherShotsLength),
-            winner: game.getWinner(),
+            winner: winner ? winner.name : undefined,
         };
 
         this.lastClientSnapshotInfo = {
@@ -87,19 +112,6 @@ class Player extends EventEmitter {
         };
 
         return snapshot;
-    }
-
-    static getNewlyCreatedElementsByLength(allElements, lastKnownLength) {
-        lastKnownLength = lastKnownLength || 0;
-        if (allElements.length === lastKnownLength) {
-            return undefined;
-        }
-        return allElements.slice(lastKnownLength);
-    }
-    static getNewlyCreatedElementsByIdentity(allElements, lastKnowElements) {
-        lastKnowElements = lastKnowElements || [];
-        // iterate over every element and only collect it if it is *not* in lastKnowElements
-        return allElements.filter(element1 => !lastKnowElements.some(element2 => element1 === element2));
     }
 
     onDisconnect() {
@@ -124,10 +136,6 @@ class Player extends EventEmitter {
 
     getId() {
         return this.id;
-    }
-
-    get destroyedShips() {
-        return this.ships.filter(ship => ship.hits === ship.size);
     }
 
     /**
@@ -171,10 +179,6 @@ class Player extends EventEmitter {
 
         // not used
         // this.emit(Player.EVENT.CONNECT, this);
-    }
-
-    get debugDescription() {
-        return `Player(name = ${this.name}, id = ${this.id})`;
     }
 }
 /**

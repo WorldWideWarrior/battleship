@@ -111,7 +111,7 @@ class Game extends EventEmitter {
         // save highscore
         if (this.hasWinner()) {
             const winner = this.getWinner();
-            highscore.addHighscore(this.getWinner(), this.getPointsOfPlayerByName(winner));
+            highscore.addHighscore(winner.name, winner.points);
         }
 
         this.emit(Game.EVENT.GAME_CLOSED, this);
@@ -170,14 +170,10 @@ class Game extends EventEmitter {
     }
 
     /**
-     * @returns name of winning player or undefined
+     * @returns {Player} the player that just won the game or undefined
      */
     getWinner() {
-        if (this.player1.areAllShipsDestroyed()) { return this.player2.name; }
-
-        if (this.player2.areAllShipsDestroyed()) { return this.player1.name; }
-
-        return undefined;
+        return this.allPlayers.find((player) => player.areAllShipsDestroyed());
     }
 
     getPointsOfPlayerByName(playerName) {
