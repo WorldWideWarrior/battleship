@@ -129,10 +129,6 @@ class Player extends EventEmitter {
         this.emit(Player.EVENT.CHEAT, this, code, ...args);
     }
 
-    setName(name) {
-        this.name = name;
-    }
-
     getId() {
         return this.id;
     }
@@ -185,7 +181,9 @@ class Player extends EventEmitter {
         this.socket = socket;
         this.addListenerToSocket(socket);
         console.log(`reconnected ${this.debugDescription}`);
-        this.emit(Player.EVENT.CONNECT, this);
+
+        //not used
+        //this.emit(Player.EVENT.CONNECT, this);
     }
 
     get debugDescription() {
@@ -200,7 +198,7 @@ Player.EVENT = {
     CHANGE_NAME: 'change-name',
     SHOT_AT: 'shot-at',
     DISCONNECT: 'disconnect',
-    CONNECT: 'connect',
+    //CONNECT: 'connect',
     CHEAT: 'cheat',
 };
 /**

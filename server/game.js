@@ -12,12 +12,6 @@ class Game extends EventEmitter {
         this.player2 = player2;
         this.hitsInARow = 0;
 
-        //player1.name = "Player1";
-        //player2.name = "Player2";
-
-        //player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
-        //player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
-
         this.allPlayers.forEach((player) => {
             player.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
             player.on(Player.EVENT.DISCONNECT, this.onPlayerDisconnect.bind(this));
@@ -222,9 +216,6 @@ class Game extends EventEmitter {
 
     clientStateForPlayer(player, serverState = this.state) {
         switch (serverState) {
-            case Game.SERVER_STATE.SETUP_BOTH_PLAYERS:
-            case Game.SERVER_STATE.SETUP_ONE_PLAYER:
-                return Game.CLIENT_STATE.SETUP;
             case Game.SERVER_STATE.TURN_OF_PLAYER_ONE:
                 return player === this.player1 ? Game.CLIENT_STATE.ATTACK : Game.CLIENT_STATE.DEFENCE;
             case Game.SERVER_STATE.TURN_OF_PLAYER_TWO:
