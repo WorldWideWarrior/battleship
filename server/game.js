@@ -1,12 +1,11 @@
-const Highscore = require('./highscore.js');
+const highscore = require('./highscore.js');
 
 const EventEmitter = require('events');
 const Player = require('./player.js');
 
 class Game extends EventEmitter {
-    constructor(fs, player1, player2) {
+    constructor(player1, player2) {
         super();
-        this.fs = fs;
         this.state = Game.SERVER_STATE.INIT;
         this.previousState = undefined;
         this.player1 = player1;
@@ -104,9 +103,8 @@ class Game extends EventEmitter {
 
         // save highscore
         if (this.hasWinner()) {
-            let highscore = new Highscore(this.fs);
             let winner = this.getWinner();
-            highscore.setHighscore(this.getWinner(), this.getPointsOfPlayerByName(winner));
+            highscore.addHighscore(this.getWinner(), this.getPointsOfPlayerByName(winner));
         }
 
         this.emit(Game.EVENT.GAME_CLOSED, this);

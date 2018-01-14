@@ -1,3 +1,4 @@
+const fs = require('fs');
 /**
  * Saves COUNT_HIGHSCORES highscores in a json object
  */
@@ -5,8 +6,7 @@ const COUNT_HIGHSCORES = 5;
 const HIGHSCORE_FILE = 'highscore.json';
 
 class Highscore {
-    constructor(fs) {
-        this.fs = fs;
+    constructor() {
         this.loadHighscores();
     }
 
@@ -14,7 +14,7 @@ class Highscore {
         return this.json;
     }
 
-    setHighscore(name, points) {
+    addHighscore(name, points) {
         console.log(`Save highscore: name: ${name}, points: ${points}`);
 
         this.json.highscores.push({name: name, points: points});
@@ -26,20 +26,20 @@ class Highscore {
 
     loadHighscores() {
         if(!this.json) {
-            if(!this.fs.existsSync(HIGHSCORE_FILE)) {
+            if(!fs.existsSync(HIGHSCORE_FILE)) {
                 this.json = {
                     highscores: []
                 };
                 this.save();
             } else {
-                this.json = JSON.parse(this.fs.readFileSync(HIGHSCORE_FILE, 'utf8'));
+                this.json = JSON.parse(fs.readFileSync(HIGHSCORE_FILE, 'utf8'));
             }
         }
     }
 
     save() {
-        this.fs.writeFileSync(HIGHSCORE_FILE, JSON.stringify(this.json), 'utf8');
+        fs.writeFileSync(HIGHSCORE_FILE, JSON.stringify(this.json), 'utf8');
     }
 }
 
-module.exports = Highscore;
+module.exports = new Highscore();
