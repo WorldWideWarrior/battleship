@@ -107,3 +107,6 @@ gen
 
 #server 'database'
 server/highscore.json
+
+#build folder of `npm run build`
+dist/
