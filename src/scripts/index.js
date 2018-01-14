@@ -208,16 +208,10 @@ function onGameState(snapshot) {
     }
 }
 
-$(document).ready(() => {
+function initConnection() {
+    if (socket) { return; }
+
     socket = io(`${location.hostname}:3000`);
-
-    // create tables
-    const fieldOwn = $('#field-own');
-    ownBattlefield = new OwnBattlefield(fieldOwn);
-    const fieldOpponent = $('#field-opponent');
-    opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
-
-    if (!ownName) { showPlayerInput(); }
 
     socket.on('connect', () => {
         backgroundSound.playFromStart();
@@ -244,6 +238,22 @@ $(document).ready(() => {
     });
 
     socket.on('cheat-error', console.log.bind(console));
+}
+
+$(document).ready(() => {
+    // create tables
+    const fieldOwn = $('#field-own');
+    ownBattlefield = new OwnBattlefield(fieldOwn);
+    const fieldOpponent = $('#field-opponent');
+    opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
+
+    if (!ownName) {
+        showPlayerInput();
+    } else {
+        initConnection();
+        setOwnName(ownName);
+        sendOwnName();
+    }
 
     setTimeout(() => {
         $('body').removeClass('no-water-animations');
@@ -255,6 +265,7 @@ $('#buttonReadyPlayerModal').click(() => {
     const playerName = $('#playerNameInput').val();
 
     if (playerName) {
+        initConnection();
         setOwnName(playerName);
         sendOwnName();
         $('#player-modal').modal('hide');
