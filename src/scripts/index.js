@@ -52,6 +52,9 @@ function showHighscoresModal() {
         if(error) {
             $('#errorHighscore').html(error);
             return;
+        } else {
+            //clear old error
+            $('#errorHighscore').html("");
         }
 
         table.append($('<tr><th>Name</th><th>Shots</th></tr>'));
