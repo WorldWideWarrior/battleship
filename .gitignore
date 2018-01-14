@@ -104,3 +104,6 @@ gen
 .idea/markdown-navigator/
 .idea/modules.xml
 .idea/workspace.xml
+
+#server 'database'
+server/highscore.json

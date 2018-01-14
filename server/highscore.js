@@ -2,7 +2,7 @@
  * Saves COUNT_HIGHSCORES highscores in a json object
  */
 const COUNT_HIGHSCORES = 5;
-const HIGHSCORE_FILE = 'highscore';
+const HIGHSCORE_FILE = 'highscore.json';
 
 class Highscore {
     constructor(fs) {
@@ -55,6 +55,8 @@ class Highscore {
     }
 
     save() {
+        //sort before we save it
+        this.json.highscores.sort((highscoreEntryA, highscoreEntryB) => highscoreEntryA.points - highscoreEntryB.points);
         this.fs.writeFileSync(HIGHSCORE_FILE, JSON.stringify(this.json), 'utf8');
     }
 }
