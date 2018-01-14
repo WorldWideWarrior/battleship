@@ -208,7 +208,7 @@ function onGameState(snapshot) {
     }
 }
 
-function initConnection() {
+function initConnectionAndField() {
     if (socket) { return; }
 
     socket = io(`${location.hostname}:3000`);
@@ -238,19 +238,19 @@ function initConnection() {
     });
 
     socket.on('cheat-error', console.log.bind(console));
-}
 
-$(document).ready(() => {
     // create tables
     const fieldOwn = $('#field-own');
     ownBattlefield = new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
+}
 
+$(document).ready(() => {
     if (!ownName) {
         showPlayerInput();
     } else {
-        initConnection();
+        initConnectionAndField();
         setOwnName(ownName);
         sendOwnName();
     }
@@ -265,7 +265,7 @@ $('#buttonReadyPlayerModal').click(() => {
     const playerName = $('#playerNameInput').val();
 
     if (playerName) {
-        initConnection();
+        initConnectionAndField();
         setOwnName(playerName);
         sendOwnName();
         $('#player-modal').modal('hide');
