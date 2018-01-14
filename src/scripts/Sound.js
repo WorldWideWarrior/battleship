@@ -1,4 +1,4 @@
-export class Sound {
+class Sound {
     get volume() {
         return this.sound.volume;
     }
@@ -16,15 +16,15 @@ export class Sound {
         /**
          * @type {HTMLAudioElement | HTMLAudioElement}
          */
-        this.sound = document.createElement("audio");
+        this.sound = document.createElement('audio');
         this.sound.src = filename;
-        if(preload) {
-            this.preload()
+        if (preload) {
+            this.preload();
         } else {
-            this.sound.setAttribute("preload", "none");
+            this.sound.setAttribute('preload', 'none');
         }
-        this.sound.setAttribute("controls", "none");
-        this.sound.style.display = "none";
+        this.sound.setAttribute('controls', 'none');
+        this.sound.style.display = 'none';
         document.body.appendChild(this.sound);
     }
 
@@ -37,6 +37,8 @@ export class Sound {
     }
 
     preload() {
-        this.sound.setAttribute("preload", "auto");
+        this.sound.setAttribute('preload', 'auto');
     }
 }
+
+module.exports = Sound;

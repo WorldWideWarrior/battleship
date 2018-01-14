@@ -24,7 +24,7 @@ class Lobby {
 
     onClientID(socket, clientId) {
         if (!isUuid.v4(clientId)) {
-            const newid = this.getNewUserId();
+            const newid = Lobby.getNewUserId();
             socket.emit(Lobby.SERVER_EVENT.CLIENT_ID, newid);
             const player = new Player(socket, newid);
             this.newPlayerCreated(socket, player);
@@ -32,7 +32,7 @@ class Lobby {
             const runningGame = this.getGameForPlayerID(clientId);
             if (!runningGame) {
                 // check if the waiting player just reconnected
-                if(this.waitingPlayer && this.waitingPlayer.id === clientId) {
+                if (this.waitingPlayer && this.waitingPlayer.id === clientId) {
                     this.waitingPlayer.reconnect(socket);
                     socket.emit(Game.SERVER_EVENT.GAME_STATE, { state: Game.CLIENT_STATE.WAITING_FOR_OTHER_PLAYER });
                 } else {
@@ -46,7 +46,7 @@ class Lobby {
     }
 
     onSocketDisconnect(socket) {
-        if(this.waitingPlayer && this.waitingPlayer.socket === socket) {
+        if (this.waitingPlayer && this.waitingPlayer.socket === socket) {
             this.waitingPlayer = undefined;
         }
     }
@@ -67,7 +67,7 @@ class Lobby {
     }
 
     getGameForPlayerID(playerId) {
-        return this.games.find((game) => game.containsPlayer(playerId));
+        return this.games.find(game => game.containsPlayer(playerId));
     }
 
     createGame(player1, player2) {
@@ -77,10 +77,10 @@ class Lobby {
     }
     removeGame(gameToRemove) {
         gameToRemove.removeListener(Game.EVENT.GAME_CLOSED, this.binedOnGameClosed);
-        this.games = this.games.filter((game) => game !== gameToRemove);
+        this.games = this.games.filter(game => game !== gameToRemove);
     }
 
-    getNewUserId() {
+    static getNewUserId() {
         return uuidv4();
     }
     onGameClosed(game) {
@@ -93,17 +93,17 @@ class Lobby {
  * @type {Object.<String, String>}
  */
 Lobby.CLIENT_EVENT = {
-    //not a real client event because it is not send from the client but the client initialized the process
-    CONNECTION: "connection",
-    CLIENT_ID: "client-id",
-    NEW_GAME: "new-game",
+    // not a real client event because it is not send from the client but the client initialized the process
+    CONNECTION: 'connection',
+    CLIENT_ID: 'client-id',
+    NEW_GAME: 'new-game',
 };
 /**
  * events that the server emits (socket.io)
  * @type {Object.<String, String>}
  */
 Lobby.SERVER_EVENT = {
-    CLIENT_ID: "client-id",
+    CLIENT_ID: 'client-id',
 };
 
 module.exports = Lobby;

@@ -3,40 +3,38 @@ import { OwnBattlefield } from './OwnBattlefield';
 import { OpponentBattlefield } from './OpponentBattlefield';
 import { Sound } from './Sound';
 import { RingBufferPlayer } from './RingBufferPlayer';
-import {Highscore} from "./highscore";
+import { Highscore } from './highscore';
 
-let clientId = localStorage.getItem("clientId");
+let clientId = localStorage.getItem('clientId');
 let socket;
 
-let actualState;
-let ownName = localStorage.getItem("name");
-let opponentName;
+let ownName = localStorage.getItem('name');
 let ownBattlefield;
 let opponentBattlefield;
 
-const backgroundSound = new Sound("static/sound/background.mp3");
+const backgroundSound = new Sound('static/sound/background.mp3');
 backgroundSound.volume = 0.2;
 backgroundSound.loop = true;
 
 const hitPlayer = new RingBufferPlayer([
-    new Sound("static/sound/hit1.mp3"),
-    new Sound("static/sound/hit2.mp3", false),
-    new Sound("static/sound/hit3.mp3", false),
+    new Sound('static/sound/hit1.mp3'),
+    new Sound('static/sound/hit2.mp3', false),
+    new Sound('static/sound/hit3.mp3', false),
 ]);
 const missPlayer = new RingBufferPlayer([
-    new Sound("static/sound/miss1.mp3"),
+    new Sound('static/sound/miss1.mp3'),
 ]);
 const destroyPlayer = new RingBufferPlayer([
-    new Sound("static/sound/destroy1.mp3"),
-    new Sound("static/sound/destroy2.mp3", false),
-    new Sound("static/sound/destroy3.mp3", false),
-    new Sound("static/sound/destroy4.mp3", false),
-    new Sound("static/sound/destroy5.mp3", false),
-    new Sound("static/sound/destroy6.mp3", false),
-    new Sound("static/sound/destroy7.mp3", false),
-    new Sound("static/sound/destroy8.mp3", false),
-    new Sound("static/sound/destroy9.mp3", false),
-    new Sound("static/sound/destroy10.mp3", false),
+    new Sound('static/sound/destroy1.mp3'),
+    new Sound('static/sound/destroy2.mp3', false),
+    new Sound('static/sound/destroy3.mp3', false),
+    new Sound('static/sound/destroy4.mp3', false),
+    new Sound('static/sound/destroy5.mp3', false),
+    new Sound('static/sound/destroy6.mp3', false),
+    new Sound('static/sound/destroy7.mp3', false),
+    new Sound('static/sound/destroy8.mp3', false),
+    new Sound('static/sound/destroy9.mp3', false),
+    new Sound('static/sound/destroy10.mp3', false),
 ]);
 
 function showHighscoresModal() {
@@ -44,22 +42,22 @@ function showHighscoresModal() {
         backdrop: 'static',
     });
 
-    let highscore = new Highscore('http://' + location.hostname + ':3000/api/highscore');
-    return highscore.getHighscores(function (error, highscore) {
-        let table = $('#highscores');
+    const highscore = new Highscore(`http://${location.hostname}:3000/api/highscore`);
+    return highscore.getHighscores((error, highscores) => {
+        const table = $('#highscores');
         table.html('');
 
-        if(error) {
+        if (error) {
             $('#errorHighscore').html(error);
             return;
-        } else {
-            //clear old error
-            $('#errorHighscore').html("");
         }
+        // clear old error
+        $('#errorHighscore').html('');
+
 
         table.append($('<tr><th>Name</th><th>Shots</th></tr>'));
-        for(let i = 0; i < highscore.length; i++) {
-            table.append($('<tr><td>' + highscore[i].name + '</td><td>' + highscore[i].points + '</td></tr>'))
+        for (let i = 0; i < highscores.length; i++) {
+            table.append($(`<tr><td>${highscores[i].name}</td><td>${highscores[i].points}</td></tr>`));
         }
     });
 }
@@ -91,7 +89,7 @@ function showWaitingModal() {
     $('#waiting-modal').modal({
         backdrop: 'static',
         keyboard: false,
-    })
+    });
 }
 
 function closeHighscores() {
@@ -110,30 +108,9 @@ function closeWaitingModal() {
     $('#waiting-modal').modal('hide');
 }
 
-function addShip(name, posX, posY, orientation) {
-    myShips.push({
-        name,
-        position: {
-            x: posX,
-            y: posY,
-        },
-        orientation,
-    });
-}
-
-function addShot(posx, posy, hit) {
-    shots.push({
-        position: {
-            x: posx,
-            y: posy,
-        },
-        hit,
-    });
-}
-
 function setOwnName(name) {
     ownName = name;
-    localStorage.setItem("name", name);
+    localStorage.setItem('name', name);
     $('#player1Name').text(`You: ${name}`);
 }
 
@@ -142,7 +119,6 @@ function sendOwnName() {
 }
 
 function setOpponentName(name) {
-    opponentName = name;
     $('#player2Name').text(`Opponent: ${name}`);
 }
 
@@ -152,8 +128,8 @@ function restart() {
 
 function parseShips(snapshot) {
     if (snapshot.myShips) {
-        //TODO: needs a better diffing strategy
-        //ownBattlefield.ships = ownBattlefield.ships.concat(snapshot.myShips);
+        // TODO: needs a better diffing strategy
+        // ownBattlefield.ships = ownBattlefield.ships.concat(snapshot.myShips);
         ownBattlefield.ships = snapshot.myShips;
     }
     if (snapshot.otherShips) {
@@ -173,26 +149,24 @@ function parseShots(snapshot) {
 function parseShipsAndShots(snapshot) {
     parseShips(snapshot);
     parseShots(snapshot);
-    if(snapshot.myShips || snapshot.myShots) {
+    if (snapshot.myShips || snapshot.myShots) {
         ownBattlefield.updateField();
     }
-    if(snapshot.otherShips || snapshot.otherShots) {
+    if (snapshot.otherShips || snapshot.otherShots) {
         opponentBattlefield.updateField();
     }
 }
 
 
 function parseNames(snapshot) {
-    if(snapshot.myName)
-        setOwnName(snapshot.myName);
+    if (snapshot.myName) { setOwnName(snapshot.myName); }
 
-    if(snapshot.otherName)
-        setOpponentName(snapshot.otherName);
+    if (snapshot.otherName) { setOpponentName(snapshot.otherName); }
 }
 
 function onGameState(snapshot) {
-    actualState = snapshot.state;
-    if(snapshot.firstSnapshot) {
+    // actualState = snapshot.state;
+    if (snapshot.firstSnapshot) {
         ownBattlefield.ships = [];
         ownBattlefield.shots = [];
         opponentBattlefield.ships = [];
@@ -223,20 +197,19 @@ function onGameState(snapshot) {
         showGameOverModal(snapshot.winner);
     }
 
-    if(snapshot.state !== 'waiting-for-other-player') {
+    if (snapshot.state !== 'waiting-for-other-player') {
         closeWaitingModal();
     }
-    if(snapshot.state !== 'game-over') {
+    if (snapshot.state !== 'game-over') {
         closeGameOverModal();
     }
-    if(snapshot.state !== 'other-player-disconnected') {
+    if (snapshot.state !== 'other-player-disconnected') {
         closeDisconnectModal();
     }
 }
 
 $(document).ready(() => {
-
-    socket = io(location.hostname +':3000');
+    socket = io(`${location.hostname}:3000`);
 
     // create tables
     const fieldOwn = $('#field-own');
@@ -244,8 +217,7 @@ $(document).ready(() => {
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
 
-    if(!ownName)
-        showPlayerInput();
+    if (!ownName) { showPlayerInput(); }
 
     socket.on('connect', () => {
         backgroundSound.playFromStart();
@@ -254,27 +226,27 @@ $(document).ready(() => {
 
     socket.on('client-id', (id) => {
         clientId = id;
-        localStorage.setItem("clientId", id);
+        localStorage.setItem('clientId', id);
     });
 
     socket.on('game-state', onGameState);
 
-    socket.on("miss", () => {
+    socket.on('miss', () => {
         missPlayer.playNext();
     });
 
-    socket.on("hit", (hitsInARow) => {
+    socket.on('hit', (hitsInARow) => {
         hitPlayer.playAtIndex(hitsInARow - 1);
     });
 
-    socket.on("destroyed", (shipsDestroyed) => {
+    socket.on('destroyed', (shipsDestroyed) => {
         destroyPlayer.playAtIndex(shipsDestroyed - 1);
     });
 
-    socket.on("cheat-error", console.log.bind(console));
+    socket.on('cheat-error', console.log.bind(console));
 
-    setTimeout(function() {
-        $("body").removeClass("no-water-animations");
+    setTimeout(() => {
+        $('body').removeClass('no-water-animations');
     }, 100);
 });
 
@@ -297,24 +269,24 @@ $('#buttonShowHighscoreGameOver').click(() => {
     showHighscoresModal();
 });
 
-//restart after gameOver
+// restart after gameOver
 $('#buttonRestart').click(() => {
     restart();
 });
 
-$('#buttonCloseHighscore').click(() =>  {
+$('#buttonCloseHighscore').click(() => {
     closeHighscores();
 });
 
-//animations
+// animations
 $('#buttonEnableAnimations, #buttonDisableAnimations').click(() => {
     $('body').toggleClass('no-water-animations');
 });
 
-//############# CHEATS #################
+// ############# CHEATS #################
 function cheat(code, ...args) {
-    socket.emit("cheat", code, ...args);
+    socket.emit('cheat', code, ...args);
 }
 
 window.cheat = cheat;
-//######################################
+// ######################################

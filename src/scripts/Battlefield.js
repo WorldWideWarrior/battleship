@@ -1,9 +1,12 @@
-export class Battlefield {
+/* eslint-disable no-use-before-define */
+const DEACTIVATED_CLASS = 'deactivated-field';
+const ACTIVATED_CLASS = 'activated-field';
 
-    get width() {
+class Battlefield {
+    static get width() {
         return 10;
     }
-    get height() {
+    static get height() {
         return 10;
     }
 
@@ -20,7 +23,7 @@ export class Battlefield {
          * this.field[x][y]
          * @type {number[][]}
          */
-        this.field = this.generateEmptyField();
+        this.field = Battlefield.generateEmptyField();
 
         this.ships = [];
         this.shots = [];
@@ -48,15 +51,15 @@ export class Battlefield {
     }
 
     generateDomField(table) {
-        //initialize $field
-        const $field = new Array(this.width);
-        for(let x = 0; x < this.width; x++) {
-            $field[x] = new Array(this.height);
+        // initialize $field
+        const $field = new Array(Battlefield.width);
+        for (let x = 0; x < Battlefield.width; x++) {
+            $field[x] = new Array(Battlefield.height);
         }
 
-        for (let row = 0; row < this.height; row++) {
+        for (let row = 0; row < Battlefield.height; row++) {
             const rowElement = $('<div class="line"/>');
-            for (let column = 0; column < this.width; column++) {
+            for (let column = 0; column < Battlefield.width; column++) {
                 const columnElement = $('<div class="box-container"> <div class="box"/> </div>');
                 columnElement.addClass(Battlefield.FIELD_CLASS[Battlefield.FIELD.SEA]);
                 ((clickRow, clickColumn) => {
@@ -74,49 +77,49 @@ export class Battlefield {
         return $field;
     }
 
-    generateEmptyField() {
-        let field = new Array(this.width);
-        for(let x = 0; x < this.width; x++) {
-            field[x] = new Array(this.height);
-            for(let y = 0; y < this.height; y++) {
+    static generateEmpty2Field() {
+        const field = new Array(Battlefield.width);
+        for (let x = 0; x < Battlefield.width; x++) {
+            field[x] = new Array(Battlefield.height);
+            for (let y = 0; y < Battlefield.height; y++) {
                 field[x][y] = Battlefield.FIELD.SEA;
             }
         }
         return field;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     onClickOnField(x, y) {
         console.debug(`Click: ${x}, ${y}`);
     }
 
-    generateFieldState(ships, shots) {
-        let field = this.generateEmptyField();
+    static generateFieldState(ships, shots) {
+        const field = Battlefield.generateEmptyField();
 
         ships.forEach((ship) => {
-            for(let offset = 0; offset < ship.size; offset++) {
+            for (let offset = 0; offset < ship.size; offset++) {
                 let x = ship.position.x;
                 let y = ship.position.y;
-                if(ship.orientation === "down") {
+                if (ship.orientation === 'down') {
                     y += offset;
-
-                } else if(ship.orientation === "right") {
+                } else if (ship.orientation === 'right') {
                     x += offset;
                 } else {
                     console.error(`unknown orientation ${ship.orientation} for ship ${ship.name}`);
                     break;
                 }
-                //set ship flag (this removes every other flag (in this cause, only the sea flag should previously be set)
+                // set ship flag (this removes every other flag (in this cause, only the sea flag should previously be set)
                 field[x][y] = getFieldForShipAtOffset(ship, offset);
-                //ships destroyed
-                if(ship.size === ship.hits) {
-                    //add destroyed flag
+                // ships destroyed
+                if (ship.size === ship.hits) {
+                    // add destroyed flag
                     field[x][y] |= Battlefield.FIELD.DESTROYED;
                 }
             }
         });
 
         shots.forEach((shot) => {
-            //remove sea flag
+            // remove sea flag
             field[shot.position.x][shot.position.y] &= ~Battlefield.FIELD.SEA;
             // add hit or miss Flag
             field[shot.position.x][shot.position.y] |= shot.hit ? Battlefield.FIELD.HIT : Battlefield.FIELD.MISS;
@@ -124,17 +127,17 @@ export class Battlefield {
         return field;
     }
 
-    calculateDifferencesBetweenFields(fromField, toField) {
-        let differences = [];
-        for(let x = 0; x < this.width; x++) {
-            for(let y = 0; y < this.height; y++) {
-                if(fromField[x][y] !== toField[x][y]) {
+    static calculateDifferencesBetweenFields(fromField, toField) {
+        const differences = [];
+        for (let x = 0; x < Battlefield.width; x++) {
+            for (let y = 0; y < Battlefield.height; y++) {
+                if (fromField[x][y] !== toField[x][y]) {
                     differences.push({
-                        x: x,
-                        y: y,
+                        x,
+                        y,
                         from: fromField[x][y],
                         to: toField[x][y],
-                    })
+                    });
                 }
             }
         }
@@ -142,15 +145,15 @@ export class Battlefield {
     }
 
     updateField() {
-        const newField = this.generateFieldState(this.ships, this.shots);
-        const differences = this.calculateDifferencesBetweenFields(this.field, newField);
+        const newField = Battlefield.generateFieldState(this.ships, this.shots);
+        const differences = Battlefield.calculateDifferencesBetweenFields(this.field, newField);
         differences.forEach((difference) => {
             const $element = this.$field[difference.x][difference.y];
             const oldState = difference.from;
             const newState = difference.to;
-            //removes flags from oldState which are set in newState
+            // removes flags from oldState which are set in newState
             const removeMask = oldState & ~newState;
-            //removes flags from newState which are already in oldState
+            // removes flags from newState which are already in oldState
             const addMask = newState & ~oldState;
 
             $element.removeClass(getFieldClasses(removeMask));
@@ -158,7 +161,6 @@ export class Battlefield {
         });
         this.field = newField;
     }
-
 }
 
 Battlefield.FIELD = {
@@ -175,38 +177,31 @@ Battlefield.FIELD = {
 };
 
 Battlefield.FIELD_CLASS = {
-    1: "ship-start-right",
-    2: "ship-middle-right",
-    4: "ship-end-right",
-    8: "ship-start-down",
-    16: "ship-middle-down",
-    32: "ship-end-down",
-    64: "hit",
-    128: "miss",
-    256: "sea",
-    512: "destroyed",
+    1: 'ship-start-right',
+    2: 'ship-middle-right',
+    4: 'ship-end-right',
+    8: 'ship-start-down',
+    16: 'ship-middle-down',
+    32: 'ship-end-down',
+    64: 'hit',
+    128: 'miss',
+    256: 'sea',
+    512: 'destroyed',
 };
 
 function getFieldForShipAtOffset(ship, offset) {
-    const start = ship.orientation === "right" ? Battlefield.FIELD.SHIP_START_RIGHT : Battlefield.FIELD.SHIP_START_DOWN;
-    if(offset === 0) {
+    const start = ship.orientation === 'right' ? Battlefield.FIELD.SHIP_START_RIGHT : Battlefield.FIELD.SHIP_START_DOWN;
+    if (offset === 0) {
         return start;
     } else if (offset === (ship.size - 1)) {
         return start << 2;
-    } else {
-        return start << 1;
     }
+    return start << 1;
 }
 
 function getFieldClasses(field) {
-    return Object.keys(Battlefield.FIELD_CLASS).map((v) => parseInt(v, 10)).filter((value) => {
-        return (field & value) === value;
-    }).map((value) => Battlefield.FIELD_CLASS[value]).join(" ");
+    return Object.keys(Battlefield.FIELD_CLASS).map(v => parseInt(v, 10)).filter(value => (field & value) === value).map(value => Battlefield.FIELD_CLASS[value])
+        .join(' ');
 }
 
-const DEACTIVATED_CLASS = "deactivated-field";
-const ACTIVATED_CLASS = "activated-field";
-
-
-
-
+module.exports = Battlefield;

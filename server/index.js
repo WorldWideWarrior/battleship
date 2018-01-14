@@ -18,8 +18,8 @@ app.get('/api/highscore', (req, res) => {
         res.send(highscoreObject);
     } catch (error) {
         res.status(500);
-        res.send("Could not get highscore. Look into the server logs for more information");
-        console.error("Could not get highscore. Reason:", error);
+        res.send('Could not get highscore. Look into the server logs for more information');
+        console.error('Could not get highscore. Reason:', error);
     }
 });
 
@@ -27,14 +27,10 @@ app.post('/api/highscore', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     res.status(403);
-    res.send("highscore can only be set by server");
+    res.send('highscore can only be set by server');
 });
 
 http.listen(3000, () => {
     console.log('listening on *:3000');
     new Lobby(io);
 });
-
-function initHighscore() {
-    highscoreObject = new Highscore(fs);
-}

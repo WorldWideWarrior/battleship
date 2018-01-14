@@ -8,9 +8,7 @@ class Player extends EventEmitter {
         this.isConnected = true;
         this.socket = socket;
         this.id = id;
-        this.ships = this.generateShips();
-
-        //this.lastClientSnapshotInfo;
+        this.ships = Player.generateShips();
         /**
          * @type {[{position: {x: number, y: number}, hit: boolean}]}
          */
@@ -26,11 +24,11 @@ class Player extends EventEmitter {
         console.log(`Created user: ${id}, socket address: ${socket.handshake.address}`);
     }
 
-    generateShips() {
+    static generateShips() {
         const shipsToGenerate = [
             Ships.CARRIER, Ships.BATTLESHIP, Ships.BATTLESHIP,
             Ships.CRUISER, Ships.CRUISER, Ships.CRUISER,
-            Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER
+            Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER, Ships.DESTROYER,
         ];
 
         return GenerateShips.generateShips(shipsToGenerate).map((ship) => {
@@ -71,18 +69,18 @@ class Player extends EventEmitter {
             state: clientState,
             myName: this.name === info.myName ? undefined : this.name,
             otherName: opponent.name === info.otherName ? undefined : opponent.name,
-            //TODO: needs a better diffing strategy, the hits count of a ship can change and the client needs to know that
+            // TODO: needs a better diffing strategy, the hits count of a ship can change and the client needs to know that
             myShips: this.ships,
-            otherShips: this.getNewlyCreatedElementsByIdentity(opponent.destroyedShips, info.otherShips),
-            myShots: this.getNewlyCreatedElementsByLength(this.shots, info.myShotsLength),
-            otherShots: this.getNewlyCreatedElementsByLength(opponent.shots, info.otherShotsLength),
+            otherShips: Player.getNewlyCreatedElementsByIdentity(opponent.destroyedShips, info.otherShips),
+            myShots: Player.getNewlyCreatedElementsByLength(this.shots, info.myShotsLength),
+            otherShots: Player.getNewlyCreatedElementsByLength(opponent.shots, info.otherShotsLength),
             winner: game.getWinner(),
         };
 
         this.lastClientSnapshotInfo = {
             myName: this.name,
             otherName: opponent.name,
-            //myShipsLength: this.ships.length,
+            // myShipsLength: this.ships.length,
             otherShips: opponent.destroyedShips,
             myShotsLength: this.shots.length,
             otherShotsLength: opponent.shots.length,
@@ -91,28 +89,23 @@ class Player extends EventEmitter {
         return snapshot;
     }
 
-    getNewlyCreatedElementsByLength(allElements, lastKnownLength) {
+    static getNewlyCreatedElementsByLength(allElements, lastKnownLength) {
         lastKnownLength = lastKnownLength || 0;
-        if(allElements.length === lastKnownLength) {
+        if (allElements.length === lastKnownLength) {
             return undefined;
-        } else {
-            return allElements.slice(lastKnownLength);
         }
+        return allElements.slice(lastKnownLength);
     }
-    getNewlyCreatedElementsByIdentity(allElements, lastKnowElements) {
+    static getNewlyCreatedElementsByIdentity(allElements, lastKnowElements) {
         lastKnowElements = lastKnowElements || [];
-        //iterate over every element and only collect it if it is *not* in lastKnowElements
-        return allElements.filter((element1) => {
-            return !lastKnowElements.some((element2) => {
-                return element1 === element2;
-            });
-        });
+        // iterate over every element and only collect it if it is *not* in lastKnowElements
+        return allElements.filter(element1 => !lastKnowElements.some(element2 => element1 === element2));
     }
 
     onDisconnect() {
         this.isConnected = false;
         console.log(`disconnected ${this.debugDescription}`);
-        this.emit(Player.EVENT.DISCONNECT, this);
+        this.emit(Player.EVENT.DISCONNECT);
     }
 
     onNameSet(name) {
@@ -134,9 +127,7 @@ class Player extends EventEmitter {
     }
 
     get destroyedShips() {
-        return this.ships.filter((ship) => {
-            return ship.hits === ship.size;
-        })
+        return this.ships.filter(ship => ship.hits === ship.size);
     }
 
     /**
@@ -147,31 +138,27 @@ class Player extends EventEmitter {
      * 0 if it doesn't hit a ship, 1 if it hit a ship, 2 if it hit a ship and destroyed it
      */
     shotAt(x, y) {
-
-        const alreadyShotAtTheSamePosition = this.shots.some((shot) => {
-            return shot.position.x === x && shot.position.y === y;
-        });
-        if(alreadyShotAtTheSamePosition) return -1;
+        const alreadyShotAtTheSamePosition = this.shots.some(shot => shot.position.x === x && shot.position.y === y);
+        if (alreadyShotAtTheSamePosition) return -1;
 
         const hitShip = this.ships.find(Ships.isPointOnShip.bind(null, x, y));
         this.shots.push({
             position: {
-                x: x,
-                y: y,
+                x,
+                y,
             },
             hit: !!hitShip,
         });
-        if(hitShip) {
+        if (hitShip) {
             hitShip.hits += 1;
             const shipDestroyed = hitShip.hits === hitShip.size;
             return shipDestroyed ? 2 : 1;
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     areAllShipsDestroyed() {
-        return this.ships.every((ship) => ship.hits === ship.size);
+        return this.ships.every(ship => ship.hits === ship.size);
     }
 
     reconnect(socket) {
@@ -182,14 +169,14 @@ class Player extends EventEmitter {
         this.addListenerToSocket(socket);
         console.log(`reconnected ${this.debugDescription}`);
 
-        //not used
-        //this.emit(Player.EVENT.CONNECT, this);
+        // not used
+        // this.emit(Player.EVENT.CONNECT, this);
     }
 
     get debugDescription() {
-        return `Player(name = ${this.name}, id = ${this.id})`
+        return `Player(name = ${this.name}, id = ${this.id})`;
     }
-};
+}
 /**
  * local events from the player instance directly (not from socket.io)
  * @type {Object.<String, String>}
@@ -198,7 +185,7 @@ Player.EVENT = {
     CHANGE_NAME: 'change-name',
     SHOT_AT: 'shot-at',
     DISCONNECT: 'disconnect',
-    //CONNECT: 'connect',
+    // CONNECT: 'connect',
     CHEAT: 'cheat',
 };
 /**

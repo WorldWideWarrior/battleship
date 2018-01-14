@@ -17,18 +17,18 @@ class Highscore {
     addHighscore(name, points) {
         console.log(`Save highscore: name: ${name}, points: ${points}`);
 
-        this.json.highscores.push({name: name, points: points});
-        //sort points from low to high
+        this.json.highscores.push({ name, points });
+        // sort points from low to high
         this.json.highscores.sort((highscoreEntryA, highscoreEntryB) => highscoreEntryA.points - highscoreEntryB.points);
         this.json.highscores = this.json.highscores.slice(0, COUNT_HIGHSCORES);
         this.save();
     }
 
     loadHighscores() {
-        if(!this.json) {
-            if(!fs.existsSync(HIGHSCORE_FILE)) {
+        if (!this.json) {
+            if (!fs.existsSync(HIGHSCORE_FILE)) {
                 this.json = {
-                    highscores: []
+                    highscores: [],
                 };
                 this.save();
             } else {

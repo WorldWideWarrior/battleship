@@ -1,33 +1,35 @@
 const CARRIER = {
-    name: "carrier",
+    name: 'carrier',
     size: 5,
 };
 
 const BATTLESHIP = {
-    name: "battleship",
+    name: 'battleship',
     size: 4,
 };
 
 const CRUISER = {
-    name: "cruiser",
+    name: 'cruiser',
     size: 3,
 };
 
 const DESTROYER = {
-    name: "destroyer",
+    name: 'destroyer',
     size: 2,
 };
 
 function sizeOfShip(shipAsString) {
-    if(shipAsString === CARRIER.name) {
+    if (shipAsString === CARRIER.name) {
         return CARRIER.size;
-    } else if(shipAsString === BATTLESHIP.name) {
+    } else if (shipAsString === BATTLESHIP.name) {
         return BATTLESHIP.size;
-    } else if(shipAsString === CRUISER.name) {
+    } else if (shipAsString === CRUISER.name) {
         return CRUISER.size;
-    } else if(shipAsString === DESTROYER.name) {
+    } else if (shipAsString === DESTROYER.name) {
         return DESTROYER.size;
     }
+
+    return 0;
 }
 
 /**
@@ -38,13 +40,12 @@ function sizeOfShip(shipAsString) {
  * @returns {boolean}
  */
 function isPointOnShip(x, y, ship) {
-    if(ship.orientation === "right") {
+    if (ship.orientation === 'right') {
         return ship.position.y === y &&
             x >= ship.position.x && x < (ship.position.x + ship.size);
-    } else {
-        return ship.position.x === x &&
-            y >= ship.position.y && y < (ship.position.y + ship.size);
     }
+    return ship.position.x === x &&
+            y >= ship.position.y && y < (ship.position.y + ship.size);
 }
 
 module.exports = {
@@ -52,6 +53,6 @@ module.exports = {
     BATTLESHIP,
     CRUISER,
     DESTROYER,
-    sizeOfShip: sizeOfShip,
-    isPointOnShip: isPointOnShip,
+    sizeOfShip,
+    isPointOnShip,
 };

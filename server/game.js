@@ -3,6 +3,23 @@ const highscore = require('./highscore.js');
 const EventEmitter = require('events');
 const Player = require('./player.js');
 
+class StateChecker {
+    constructor(fromState, toState) {
+        this.fromState = fromState;
+        this.toState = toState;
+    }
+    unidirectional(from, to) {
+        return this.fromState === from && this.toState === to;
+    }
+    bidirectional(state1, state2) {
+        return (this.fromState === state1 && this.toState === state2) ||
+            (this.fromState === state2 && this.toState === state1);
+    }
+    repeat(state) {
+        return this.fromState === state && this.toState === state;
+    }
+}
+
 class Game extends EventEmitter {
     constructor(player1, player2) {
         super();
@@ -21,19 +38,18 @@ class Game extends EventEmitter {
 
         console.log(`Game created, player1: ${player1.debugDescription}, player2: ${player2.debugDescription}`);
 
-        //start game
+        // start game
         this.changeState(Game.SERVER_STATE.TURN_OF_PLAYER_ONE);
     }
 
     destroyShipsOfPlayer(ships, player) {
         ships.forEach((ship) => {
-            for(let offset = 0; offset < ship.size; offset++) {
+            for (let offset = 0; offset < ship.size; offset++) {
                 let x = ship.position.x;
                 let y = ship.position.y;
-                if(ship.orientation === "down") {
+                if (ship.orientation === 'down') {
                     y += offset;
-
-                } else if(ship.orientation === "right") {
+                } else if (ship.orientation === 'right') {
                     x += offset;
                 } else {
                     console.error(`unknown orientation ${ship.orientation} for ship ${ship.name}`);
@@ -41,7 +57,7 @@ class Game extends EventEmitter {
                 }
                 this.onShotAt(this.getOpponentOf(player), x, y);
             }
-        })
+        });
     }
 
     get allPlayers() {
@@ -50,25 +66,23 @@ class Game extends EventEmitter {
 
     get currentPlayer() {
         switch (this.state) {
-            case Game.SERVER_STATE.TURN_OF_PLAYER_ONE: return this.player1;
-            case Game.SERVER_STATE.TURN_OF_PLAYER_TWO: return this.player2;
-            default: return false;
+        case Game.SERVER_STATE.TURN_OF_PLAYER_ONE: return this.player1;
+        case Game.SERVER_STATE.TURN_OF_PLAYER_TWO: return this.player2;
+        default: return false;
         }
     }
 
     containsPlayer(playerId) {
-        return this.allPlayers.some((player) => {
-            return player.getId() === playerId;
-        });
+        return this.allPlayers.some(player => player.getId() === playerId);
     }
 
     getOpponentOf(player) {
         return this.player1 === player ? this.player2 : this.player1;
     }
 
-    onPlayerDisconnect(player) {
-        const somePlayerConnected = this.allPlayers.some((player) => player.isConnected);
-        if(!somePlayerConnected) {
+    onPlayerDisconnect() {
+        const somePlayerConnected = this.allPlayers.some(player => player.isConnected);
+        if (!somePlayerConnected) {
             this.closeGame();
             return;
         }
@@ -76,15 +90,13 @@ class Game extends EventEmitter {
     }
 
     reconnect(playerId, socket) {
-        let reconnectedPlayer = this.allPlayers.find((player) => {
-            return player.getId() === playerId;
-        });
-        if(!reconnectedPlayer) {
+        const reconnectedPlayer = this.allPlayers.find(player => player.getId() === playerId);
+        if (!reconnectedPlayer) {
             console.error(`could not reconnect socket with client id ${playerId} because no player with the same id does exists`);
             return;
         }
         reconnectedPlayer.reconnect(socket);
-        if(this.state === Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED) {
+        if (this.state === Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED) {
             this.changeState(this.previousState);
         } else {
             reconnectedPlayer.onGameStateChange(this, this.previousState, this.state);
@@ -98,7 +110,7 @@ class Game extends EventEmitter {
 
         // save highscore
         if (this.hasWinner()) {
-            let winner = this.getWinner();
+            const winner = this.getWinner();
             highscore.addHighscore(this.getWinner(), this.getPointsOfPlayerByName(winner));
         }
 
@@ -106,32 +118,30 @@ class Game extends EventEmitter {
     }
 
     onShotAt(player, x, y) {
-        if(player !== this.currentPlayer) {
+        if (player !== this.currentPlayer) {
             console.debug(`${player.debugDescription} called onShotAt but is not the current player`);
             return;
         }
         const opponent = this.getOpponentOf(player);
         const shotResult = opponent.shotAt(x, y);
-        if(shotResult === -1) {
+        if (shotResult === -1) {
             console.debug(`${player.debugDescription} shot already at the same position`);
-            return;
-        } else if(shotResult === 0) {
-            //miss
+        } else if (shotResult === 0) {
+            // miss
             this.hitsInARow = 0;
             const nextState = this.state === Game.SERVER_STATE.TURN_OF_PLAYER_ONE ?
                 Game.SERVER_STATE.TURN_OF_PLAYER_TWO : Game.SERVER_STATE.TURN_OF_PLAYER_ONE;
             this.changeState(nextState);
             this.broadcast(Game.SERVER_EVENT.MISS);
-
         } else if (shotResult === 1 || shotResult === 2) {
-            //hit
+            // hit
             this.hitsInARow += 1;
             this.broadcast(Game.SERVER_EVENT.HIT, this.hitsInARow);
-            if(shotResult === 2) {
+            if (shotResult === 2) {
                 this.broadcast(Game.SERVER_EVENT.DESTROYED, opponent.destroyedShips.length);
             }
 
-            if(this.hasWinner()) {
+            if (this.hasWinner()) {
                 this.changeState(Game.SERVER_STATE.GAME_OVER);
                 this.closeGame();
             } else {
@@ -145,15 +155,17 @@ class Game extends EventEmitter {
     }
 
     onCheat(player, code, ...args) {
-        console.log("cheat", code, ...args);
+        console.log('cheat', code, ...args);
         const opponent = this.getOpponentOf(player);
         switch (code) {
-            case "destroy-most-ships":
-                return this.destroyShipsOfPlayer(opponent.ships.slice(1), opponent);
-            case "destroy-all-ships":
-                return this.destroyShipsOfPlayer(opponent.ships, opponent);
-            default:
-                player.socket.emit("cheat-error", "unknown cheat code");
+        case 'destroy-most-ships':
+            this.destroyShipsOfPlayer(opponent.ships.slice(1), opponent);
+            break;
+        case 'destroy-all-ships':
+            this.destroyShipsOfPlayer(opponent.ships, opponent);
+            break;
+        default:
+            player.socket.emit('cheat-error', 'unknown cheat code');
         }
     }
 
@@ -161,37 +173,43 @@ class Game extends EventEmitter {
      * @returns name of winning player or undefined
      */
     getWinner() {
-        if(this.player1.areAllShipsDestroyed())
-            return this.player2.name;
+        if (this.player1.areAllShipsDestroyed()) { return this.player2.name; }
 
-        if(this.player2.areAllShipsDestroyed())
-            return this.player1.name;
+        if (this.player2.areAllShipsDestroyed()) { return this.player1.name; }
 
         return undefined;
     }
 
     getPointsOfPlayerByName(playerName) {
-        if(this.player1.name === playerName) {
+        if (this.player1.name === playerName) {
             return this.player2.shots.length;
-        } else {
-            return this.player1.shots.length;
         }
+        return this.player1.shots.length;
     }
 
     hasWinner() {
-        return this.allPlayers.some((player) => player.areAllShipsDestroyed());
+        return this.allPlayers.some(player => player.areAllShipsDestroyed());
     }
 
-    canChangeState(fromState, toState) {
+    static canChangeState(fromState, toState) {
         const s = new StateChecker(fromState, toState);
         return s.unidirectional(Game.SERVER_STATE.INIT, Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
 
-            s.bidirectional(Game.SERVER_STATE.TURN_OF_PLAYER_ONE, Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
+            s.bidirectional(
+                Game.SERVER_STATE.TURN_OF_PLAYER_ONE,
+                Game.SERVER_STATE.TURN_OF_PLAYER_TWO,
+            ) ||
             s.repeat(Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
             s.repeat(Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
 
-            s.bidirectional(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED, Game.SERVER_STATE.TURN_OF_PLAYER_ONE) ||
-            s.bidirectional(Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED, Game.SERVER_STATE.TURN_OF_PLAYER_TWO) ||
+            s.bidirectional(
+                Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED,
+                Game.SERVER_STATE.TURN_OF_PLAYER_ONE,
+            ) ||
+            s.bidirectional(
+                Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED,
+                Game.SERVER_STATE.TURN_OF_PLAYER_TWO,
+            ) ||
 
             s.unidirectional(Game.SERVER_STATE.TURN_OF_PLAYER_ONE, Game.SERVER_STATE.GAME_OVER) ||
             s.unidirectional(Game.SERVER_STATE.TURN_OF_PLAYER_TWO, Game.SERVER_STATE.GAME_OVER);
@@ -202,7 +220,7 @@ class Game extends EventEmitter {
     }
 
     _changeState(fromState, toState) {
-        if(!this.canChangeState(fromState, toState)) {
+        if (!Game.canChangeState(fromState, toState)) {
             console.log(`Can't change game state from ${fromState} state to ${toState} state`);
             return;
         }
@@ -216,46 +234,31 @@ class Game extends EventEmitter {
 
     clientStateForPlayer(player, serverState = this.state) {
         switch (serverState) {
-            case Game.SERVER_STATE.TURN_OF_PLAYER_ONE:
-                return player === this.player1 ? Game.CLIENT_STATE.ATTACK : Game.CLIENT_STATE.DEFENCE;
-            case Game.SERVER_STATE.TURN_OF_PLAYER_TWO:
-                return player === this.player2 ? Game.CLIENT_STATE.ATTACK : Game.CLIENT_STATE.DEFENCE;
-            case Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED:
-                return Game.CLIENT_STATE.OTHER_PLAYER_DISCONNECTED;
-            case Game.SERVER_STATE.GAME_OVER:
-                return Game.CLIENT_STATE.GAME_OVER;
+        case Game.SERVER_STATE.TURN_OF_PLAYER_ONE:
+            return player === this.player1 ? Game.CLIENT_STATE.ATTACK : Game.CLIENT_STATE.DEFENCE;
+        case Game.SERVER_STATE.TURN_OF_PLAYER_TWO:
+            return player === this.player2 ? Game.CLIENT_STATE.ATTACK : Game.CLIENT_STATE.DEFENCE;
+        case Game.SERVER_STATE.ONE_PLAYER_IS_DISCONNECTED:
+            return Game.CLIENT_STATE.OTHER_PLAYER_DISCONNECTED;
+        case Game.SERVER_STATE.GAME_OVER:
+            return Game.CLIENT_STATE.GAME_OVER;
+        default:
+            return undefined;
         }
     }
-    broadcast() {
-        const args = Array.from(arguments);
+    broadcast(...args) {
         this.allPlayers.forEach((player) => {
-            player.socket.emit.apply(player.socket, args);
+            player.socket.emit.call(player.socket, ...args);
         });
     }
 }
 
-class StateChecker {
-    constructor(fromState, toState) {
-        this.fromState = fromState;
-        this.toState = toState;
-    }
-    unidirectional(from, to) {
-        return this.fromState === from && this.toState === to;
-    }
-    bidirectional(state1, state2) {
-        return (this.fromState === state1  && this.toState === state2) ||
-                (this.fromState === state2  && this.toState === state1);
-    }
-    repeat(state) {
-        return this.fromState === state && this.toState === state;
-    }
-}
 /**
  * local events from the game instance directly (not from socket.io)
  * @type {Object.<String, String>}
  */
 Game.EVENT = {
-    GAME_CLOSED: "game-closed",
+    GAME_CLOSED: 'game-closed',
 };
 
 /**

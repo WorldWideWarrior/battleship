@@ -1,4 +1,4 @@
-export class RingBufferPlayer {
+class RingBufferPlayer {
     constructor(sounds) {
         this.soundIndex = -1;
         /**
@@ -14,9 +14,9 @@ export class RingBufferPlayer {
         this.playAtIndex(this.soundIndex + 1);
     }
     playAtIndex(index) {
-        index = index % this.sounds.length;
+        index %= this.sounds.length;
 
-        if(this.previouslyPlayedSound) {
+        if (this.previouslyPlayedSound) {
             this.previouslyPlayedSound.stop();
         }
 
@@ -32,6 +32,6 @@ export class RingBufferPlayer {
         const nextSound = this.sounds[nextIndex];
         nextSound.preload();
     }
-
-
 }
+
+module.exports = RingBufferPlayer;
