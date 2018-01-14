@@ -202,6 +202,7 @@ function onGameState(snapshot) {
         ownBattlefield.shots = [];
         opponentBattlefield.ships = [];
         opponentBattlefield.shots = [];
+        sendOwnName();
     }
     if (snapshot.state === 'waiting-for-other-player') {
         ownBattlefield.reset();
@@ -255,9 +256,6 @@ $(document).ready(() => {
     socket.on('connect', () => {
         backgroundSound.playFromStart();
         socket.emit('client-id', clientId);
-        if(ownName) {
-            sendOwnName();
-        }
     });
 
     socket.on('client-id', (id) => {
@@ -265,13 +263,7 @@ $(document).ready(() => {
         localStorage.setItem("clientId", id);
     });
 
-    socket.on('set-name', (name) => {
-        setOpponentName(name);
-    });
-
-    socket.on('game-state', (snapshot) => {
-        onGameState(snapshot);
-    });
+    socket.on('game-state', onGameState);
 
     socket.on("miss", () => {
         missPlayer.playNext();

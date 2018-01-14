@@ -13,11 +13,11 @@ class Game extends EventEmitter {
         this.player2 = player2;
         this.hitsInARow = 0;
 
-        player1.name = "Player1";
-        player2.name = "Player2";
+        //player1.name = "Player1";
+        //player2.name = "Player2";
 
-        player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
-        player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
+        //player1.on(Player.EVENT.CHANGE_NAME, player2.sendOpponentName.bind(player2));
+        //player2.on(Player.EVENT.CHANGE_NAME, player1.sendOpponentName.bind(player1));
 
         this.allPlayers.forEach((player) => {
             player.on(Player.EVENT.SHOT_AT, this.onShotAt.bind(this));
