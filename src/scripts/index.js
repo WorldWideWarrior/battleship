@@ -39,14 +39,6 @@ const destroyPlayer = new RingBufferPlayer([
     new Sound("static/sound/destroy10.mp3", false),
 ]);
 
-function disableWaterAnimation() {
-    $('body').addClass('no-water-animations');
-}
-
-function activateWaterAnimation() {
-    $('body').removeClass('no-water-animations');
-}
-
 function showHighscoresModal() {
     $('#highscores-modal').modal({
         backdrop: 'static',
@@ -278,6 +270,10 @@ $(document).ready(() => {
     });
 
     socket.on("cheat-error", console.log.bind(console));
+
+    setTimeout(function() {
+        $("body").removeClass("no-water-animations");
+    }, 100);
 });
 
 // validate player name
@@ -309,12 +305,8 @@ $('#buttonCloseHighscore').click(() =>  {
 });
 
 //animations
-$('#buttonEnableAnimations').click(() => {
-    activateWaterAnimation();
-});
-
-$('#buttonDisableAnimations').click(() => {
-    disableWaterAnimation();
+$('#buttonEnableAnimations, #buttonDisableAnimations').click(() => {
+    $('body').toggleClass('no-water-animations');
 });
 
 //############# CHEATS #################
