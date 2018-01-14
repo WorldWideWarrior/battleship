@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 require('./check-versions')();
 
 const config = require('../config');

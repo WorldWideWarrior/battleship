@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const chalk = require('chalk');
 const semver = require('semver');
 const packageConfig = require('../package.json');
@@ -25,7 +26,7 @@ if (shell.which('npm')) {
 
 module.exports = function () {
     const warnings = [];
-    for (var i = 0; i < versionRequirements.length; i++) {
+    for (let i = 0; i < versionRequirements.length; i++) {
         const mod = versionRequirements[i];
         if (!semver.satisfies(mod.currentVersion, mod.versionRequirement)) {
             warnings.push(`${mod.name}: ${

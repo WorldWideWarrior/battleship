@@ -54,12 +54,9 @@ exports.cssLoaders = function (options) {
 exports.styleLoaders = function (options) {
     const loaders = exports.cssLoaders(options);
     return Object.keys(loaders)
-        .map(extension => ({extension, loader: loaders[extension]}))
-        .map(({extension, loader}) => {
-            return {
-                test: new RegExp(`\\.${extension}$`),
-                use: loader,
-            }
-        });
-
+        .map(extension => ({ extension, loader: loaders[extension] }))
+        .map(({ extension, loader }) => ({
+            test: new RegExp(`\\.${extension}$`),
+            use: loader,
+        }));
 };
