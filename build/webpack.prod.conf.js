@@ -63,7 +63,7 @@ const webpackConfig = merge(baseWebpackConfig, {
 });
 
 if (config.build.productionGzip) {
-    const CompressionWebpackPlugin = require('compression-webpack-plugin');
+    const CompressionWebpackPlugin = require('compression-webpack-plugin'); // eslint-disable-line global-require
 
     webpackConfig.plugins.push(new CompressionWebpackPlugin({
         asset: '[path].gz[query]',
@@ -77,7 +77,7 @@ if (config.build.productionGzip) {
 }
 
 if (config.build.bundleAnalyzerReport) {
-    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; // eslint-disable-line global-require
     webpackConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 

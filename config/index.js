@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     build: {
-        env: require('./prod.env'),
+        env: require('./prod.env'), // eslint-disable-line global-require
         index: path.resolve(__dirname, '../dist/index.html'),
         assetsRoot: path.resolve(__dirname, '../dist'),
         assetsSubDirectory: 'static',
@@ -21,7 +21,7 @@ module.exports = {
         bundleAnalyzerReport: process.env.npm_config_report,
     },
     dev: {
-        env: require('./dev.env'),
+        env: require('./dev.env'), // eslint-disable-line global-require
         port: 8090,
         autoOpenBrowser: true,
         assetsSubDirectory: 'static',

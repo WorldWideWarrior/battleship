@@ -36,7 +36,7 @@ module.exports = {
             //   test: /\.js/,
             //   loader: 'eslint-loader',
             //   enforce: 'pre',
-            //   include: [resolve('src'), resolve('test')],
+            //   include: [resolve('src'), resolve('test')], // eslint-disable-line global-require
             //   options: {
             //     formatter: require('eslint-friendly-formatter')
             //   }

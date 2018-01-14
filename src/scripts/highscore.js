@@ -5,7 +5,7 @@ export class Highscore {
 
     getHighscores(callback) {
         const xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function () {
+        xmlHttp.onreadystatechange = function onReadyStageChange() {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 console.log(`Response highscore: ${xmlHttp.responseText}`);
                 const jsonHighscore = JSON.parse(xmlHttp.responseText).highscores;
@@ -23,7 +23,7 @@ export class Highscore {
 
     setHighscore(name, points) {
         const xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function () {
+        xmlHttp.onreadystatechange = function onReadyStageChange() {
             if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
                 console.log(`Response highscore: ${xmlHttp.responseText}`);
                 return true;

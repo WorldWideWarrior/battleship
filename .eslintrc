@@ -17,6 +17,7 @@
     "no-param-reassign": 0,
     "no-bitwise": 0,
     "no-restricted-globals": 0,
-    "import/prefer-default-export": 0
+    "import/prefer-default-export": 0,
+    "func-names" : 0
   }
 }

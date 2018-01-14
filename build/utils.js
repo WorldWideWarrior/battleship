@@ -52,14 +52,14 @@ exports.cssLoaders = function (options) {
 
 // Generate loaders for standalone style files (outside of .vue)
 exports.styleLoaders = function (options) {
-    const output = [];
     const loaders = exports.cssLoaders(options);
-    for (const extension in loaders) {
-        const loader = loaders[extension];
-        output.push({
-            test: new RegExp(`\\.${extension}$`),
-            use: loader,
+    return Object.keys(loaders)
+        .map(extension => ({extension, loader: loaders[extension]}))
+        .map(({extension, loader}) => {
+            return {
+                test: new RegExp(`\\.${extension}$`),
+                use: loader,
+            }
         });
-    }
-    return output;
+
 };
