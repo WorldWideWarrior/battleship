@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Battlefield } from './Battlefield';
+import { Battlefield } from './battlefield';
 
 export class OpponentBattlefield extends Battlefield {
     constructor(table, socket) {

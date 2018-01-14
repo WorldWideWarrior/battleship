@@ -1,8 +1,8 @@
 import io from 'socket.io-client';
-import { OwnBattlefield } from './OwnBattlefield';
-import { OpponentBattlefield } from './OpponentBattlefield';
-import { Sound } from './Sound';
-import { RingBufferPlayer } from './RingBufferPlayer';
+import { OwnBattlefield } from './own_battlefield';
+import { OpponentBattlefield } from './opponent_battlefield';
+import { Sound } from './sound';
+import { RingBufferPlayer } from './ring_buffer_player';
 import { Highscore } from './highscore';
 
 let clientId = localStorage.getItem('clientId');

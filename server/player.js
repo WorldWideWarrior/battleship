@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const Ships = require('./ships.js');
-const GenerateShips = require('./generate-ships.js');
+const GenerateShips = require('./generate_ships.js');
 
 class Player extends EventEmitter {
     static generateShips() {
