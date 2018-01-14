@@ -177,16 +177,16 @@ Battlefield.FIELD = {
 };
 
 Battlefield.FIELD_CLASS = {
-    1: 'ship-start-right',
-    2: 'ship-middle-right',
-    4: 'ship-end-right',
-    8: 'ship-start-down',
-    16: 'ship-middle-down',
-    32: 'ship-end-down',
-    64: 'hit',
-    128: 'miss',
-    256: 'sea',
-    512: 'destroyed',
+    [1 << 0]: 'ship-start-right',
+    [1 << 1]: 'ship-middle-right',
+    [1 << 2]: 'ship-end-right',
+    [1 << 3]: 'ship-start-down',
+    [1 << 4]: 'ship-middle-down',
+    [1 << 5]: 'ship-end-down',
+    [1 << 6]: 'hit',
+    [1 << 7]: 'miss',
+    [1 << 8]: 'sea',
+    [1 << 9]: 'destroyed',
 };
 
 function getFieldForShipAtOffset(ship, offset) {
