@@ -5,7 +5,6 @@ const config = require('../config');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const env = config.build.env;
 
@@ -36,7 +35,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         // split vendor js into its own file
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
-            minChunks(module, count) {
+            minChunks(module) {
                 // any required modules inside node_modules are extracted to vendor
                 return (
                     module.resource &&
