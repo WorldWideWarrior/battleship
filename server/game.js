@@ -173,7 +173,7 @@ class Game extends EventEmitter {
      * @returns {Player} the player that just won the game or undefined
      */
     getWinner() {
-        return this.allPlayers.find(player => player.areAllShipsDestroyed());
+        return this.getOpponentOf(this.allPlayers.find(player => player.areAllShipsDestroyed()));
     }
 
     getPointsOfPlayerByName(playerName) {
