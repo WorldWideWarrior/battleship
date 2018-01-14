@@ -245,6 +245,9 @@ function initConnectionAndField() {
     ownBattlefield = new OwnBattlefield(fieldOwn);
     const fieldOpponent = $('#field-opponent');
     opponentBattlefield = new OpponentBattlefield(fieldOpponent, socket);
+    setTimeout(() => {
+        $('body').removeClass('no-water-animations');
+    }, 100);
 }
 
 $(document).ready(() => {
@@ -255,10 +258,6 @@ $(document).ready(() => {
         setOwnName(ownName);
         sendOwnName();
     }
-
-    setTimeout(() => {
-        $('body').removeClass('no-water-animations');
-    }, 100);
 });
 
 // validate player name
