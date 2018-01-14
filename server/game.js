@@ -176,13 +176,6 @@ class Game extends EventEmitter {
         return this.getOpponentOf(this.allPlayers.find(player => player.areAllShipsDestroyed()));
     }
 
-    getPointsOfPlayerByName(playerName) {
-        if (this.player1.name === playerName) {
-            return this.player2.shots.length;
-        }
-        return this.player1.shots.length;
-    }
-
     hasWinner() {
         return this.allPlayers.some(player => player.areAllShipsDestroyed());
     }
