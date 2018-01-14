@@ -111,7 +111,7 @@ class Game extends EventEmitter {
         // save highscore
         if (this.hasWinner()) {
             const winner = this.getWinner();
-            highscore.addHighscore(winner.name, winner.points);
+            highscore.addHighscore(winner.name, this.getOpponentOf(winner).points);
         }
 
         this.emit(Game.EVENT.GAME_CLOSED, this);
